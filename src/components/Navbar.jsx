@@ -43,7 +43,7 @@ const Navbar = () => {
               {/* Botão Sócio */}
               <Link
                 to="/socio"
-                className="bg-white text-[#df0000] hover:bg-black hover:text-white px-4 py-2 rounded-md text-sm font-bold uppercase shadow-md transform hover:-translate-y-0.5 transition-all"
+                className="bg-black text-white hover:bg-white hover:text-black px-4 py-2 rounded-md text-sm font-bold uppercase shadow-md transform hover:-translate-y-0.5 transition-all"
               >
                 Faz-te Sócio
               </Link>
@@ -78,7 +78,7 @@ const Navbar = () => {
             ))}
             <Link
               to="/socio"
-              className="bg-white text-[#df0000] block px-3 py-2 rounded-md text-base font-bold mt-4 text-center hover:bg-black hover:text-white transition"
+              className="bg-black text-white block px-3 py-2 rounded-md text-base font-bold mt-4 text-center hover:bg-white hover:text-black transition"
               onClick={() => setIsOpen(false)}
             >
               FAZ-TE SÓCIO

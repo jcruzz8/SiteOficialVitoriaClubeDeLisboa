@@ -285,7 +285,7 @@ const Loja = () => {
                         Envia o comprovativo para: <br/>
                         <span className="font-bold text-blue-600 select-all">marketing.vitoriacl@gmail.com</span>
                       </li>
-                      <li>Levanta a tua encomenda na <span className="font-bold">Sede do Clube</span>.</li>
+                      <li>Levanta a tua encomenda na <span className="font-bold">Secretaria do Clube</span>.</li>
                     </ul>
                   </div>
 

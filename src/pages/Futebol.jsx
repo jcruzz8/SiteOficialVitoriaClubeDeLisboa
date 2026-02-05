@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { Trophy, Calendar, Users, Shirt, Loader, AlertCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import vclLogo from '../assets/VCL.png';
 
 const Futebol = () => {
   // --- ESTADOS ---
@@ -208,7 +209,7 @@ const Futebol = () => {
                             {jogador.foto_url ? (
                               <img src={jogador.foto_url} alt={jogador.nome} className="w-full h-full object-cover object-top group-hover:scale-110 transition duration-500" />
                             ) : (
-                              <Shirt size={64} className="text-gray-300 group-hover:text-vcl-red group-hover:scale-110 transition duration-500" />
+                              <img src={vclLogo} alt="VCL Logo" className="w-24 h-24 object-contain grayscale group-hover:grayscale-0 transition duration-500" />
                             )}
                             <div className="absolute top-2 right-2 bg-vcl-black text-white text-xs font-bold px-2 py-1 rounded shadow-sm">#{jogador.numero}</div>
                           </div>

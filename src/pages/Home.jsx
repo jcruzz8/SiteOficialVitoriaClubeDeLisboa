@@ -373,21 +373,20 @@ const Home = () => {
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800/50">
             
             {/* Patrocinador 1 */}
-            {/* Mantive a opacidade para não serem demasiado agressivos, passam a 100% com o rato */}
             <img 
               src={sponsor1} 
               alt="Patrocinador Oficial 1" 
-              className="h-20 md:h-24 w-auto object-contain opacity-70 hover:opacity-100 transition duration-500" 
+              className="h-32 md:h-40 w-auto object-contain grayscale hover:grayscale-0 transition duration-300 cursor-pointer" 
             />
 
             {/* Divisória vertical escura */}
-            <div className="hidden md:block w-px h-16 bg-zinc-700"></div>
+            <div className="hidden md:block w-px h-24 bg-zinc-700"></div>
 
             {/* Patrocinador 2 */}
             <img 
               src={sponsor2} 
               alt="Patrocinador Oficial 2" 
-              className="h-20 md:h-24 w-auto object-contain opacity-70 hover:opacity-100 transition duration-500" 
+              className="h-32 md:h-40 w-auto object-contain grayscale hover:grayscale-0 transition duration-300 cursor-pointer" 
             />
 
           </div>

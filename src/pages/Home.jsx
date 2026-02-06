@@ -16,6 +16,9 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   
+  // --- ESTADO PARA O BOTÃO DE ALUGUER ---
+  const [showEmail, setShowEmail] = useState(false);
+  
   // --- COLA AQUI O TEU LINK CSV DOS JOGOS (O MESMO DO FUTEBOL.JSX) ---
   const LINK_CSV = import.meta.env.VITE_GOOGLE_SHEETS_JOGOS;
 
@@ -313,7 +316,105 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 5. LOJA DESTAQUE */}
+      {/* 5. ALUGUER DO CAMPO */}
+      <section className="py-24 relative overflow-hidden bg-zinc-800">
+        {/* Fundo com gradiente sutil */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-zinc-800 via-zinc-800/90 to-zinc-900"></div>
+        
+        {/* Elementos decorativos dinâmicos */}
+        <div className="absolute inset-0 z-0">
+          {/* Orbs flutuantes */}
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-vcl-red rounded-full opacity-6 blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-vcl-gold rounded-full opacity-3 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          
+          {/* Padrão geométrico - Muito subtil */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.01]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="modernGrid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+                <circle cx="25" cy="25" r="1" fill="#fff"/>
+                <path d="M 0 0 L 50 50 M 50 0 L 0 50" stroke="#fff" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#modernGrid)" />
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <span className="text-vcl-gold font-bold uppercase tracking-widest mb-4 block flex items-center justify-center gap-2 text-sm">
+              <MapPin size={18}/> Aluguer de Campo
+            </span>
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+              Reserve o Nosso <span className="text-transparent bg-clip-text bg-gradient-to-r from-vcl-red via-red-500 to-vcl-gold">Campo</span>
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-vcl-red to-vcl-gold mx-auto rounded-full mb-6"></div>
+            <p className="text-gray-300 max-w-2xl mx-auto text-lg font-light">
+              Perfeito para treinos, partidas amigáveis e eventos desportivos. Infraestrutura moderna com toda a qualidade do Vitória.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {/* Card 1 */}
+            <div className="group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-vcl-red/15 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-2xl"></div>
+              <div className="relative bg-zinc-700/50 backdrop-blur-md border border-vcl-red/30 group-hover:border-vcl-red/60 rounded-2xl p-8 transition duration-300 shadow-lg hover:shadow-xl">
+                <div className="bg-gradient-to-br from-vcl-red to-red-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 text-white group-hover:scale-110 transition duration-300 shadow-md">
+                  <ShieldCheck size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Infraestrutura de Qualidade</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Campo em relvado de alto desempenho, iluminação profissional e balneários completos.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-vcl-gold/15 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-2xl"></div>
+              <div className="relative bg-zinc-700/50 backdrop-blur-md border border-vcl-gold/30 group-hover:border-vcl-gold/60 rounded-2xl p-8 transition duration-300 shadow-lg hover:shadow-xl">
+                <div className="bg-gradient-to-br from-vcl-gold to-yellow-500 w-16 h-16 rounded-xl flex items-center justify-center mb-6 text-white group-hover:scale-110 transition duration-300 shadow-md">
+                  <Calendar size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Disponibilidade Flexível</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Diversos horários disponíveis durante a semana e fins de semana para tua conveniência.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-2xl"></div>
+              <div className="relative bg-zinc-700/50 backdrop-blur-md border border-white/20 group-hover:border-white/40 rounded-2xl p-8 transition duration-300 shadow-lg hover:shadow-xl">
+                <div className="bg-gradient-to-br from-gray-400 to-gray-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 text-white group-hover:scale-110 transition duration-300 shadow-md">
+                  <Trophy size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Ambiente Profissional</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Espaço seguro e bem mantido, ideal para todas as modalidades e faixas etárias.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-vcl-red/20 via-vcl-gold/15 to-vcl-red/20 rounded-2xl blur-lg group-hover:blur-xl transition duration-500 opacity-50 group-hover:opacity-70"></div>
+            <div className="relative bg-zinc-700/60 backdrop-blur-md border border-vcl-red/40 group-hover:border-vcl-red/70 rounded-2xl p-8 md:p-12 text-center shadow-xl group-hover:shadow-2xl transition duration-300">
+              <p className="text-gray-100 mb-8 text-lg">
+                <span className="font-bold text-white">Interessado em alugar o campo?</span> Contacte nos para obter informações e agendar o seu aluguer.
+              </p>
+              <button 
+                onClick={() => setShowEmail(!showEmail)}
+                className="inline-block bg-gradient-to-r from-vcl-red to-red-600 text-white px-10 py-4 rounded-full font-bold uppercase hover:from-vcl-gold hover:to-yellow-500 hover:text-vcl-black transition duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform active:scale-95"
+              >
+                {showEmail ? 'marketing.vitoriacl@gmail.com' : 'Obter Informações'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. LOJA DESTAQUE */}
       <section className="relative py-24 md:py-32 bg-vcl-black overflow-hidden border-t border-zinc-800">
         {/* Imagem de fundo ambiente */}
         <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -365,8 +466,29 @@ const Home = () => {
       </section>
 
       {/* 6. SPONSORS */}
-      <section className="py-16 bg-vcl-black border-t border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+      <section className="py-16 relative overflow-hidden bg-zinc-800 border-t border-zinc-800">
+        {/* Fundo com gradiente sutil */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-zinc-800 via-zinc-800/90 to-zinc-900"></div>
+        
+        {/* Elementos decorativos dinâmicos */}
+        <div className="absolute inset-0 z-0">
+          {/* Orbs flutuantes */}
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-vcl-red rounded-full opacity-6 blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-vcl-gold rounded-full opacity-3 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          
+          {/* Padrão geométrico - Muito subtil */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.01]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="modernGrid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+                <circle cx="25" cy="25" r="1" fill="#fff"/>
+                <path d="M 0 0 L 50 50 M 50 0 L 0 50" stroke="#fff" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#modernGrid)" />
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
           {/* Título ligeiramente mais claro */}
           <p className="text-gray-300 text-xs font-bold uppercase tracking-widest mb-10">Parceiros Oficiais</p>
           

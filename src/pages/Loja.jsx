@@ -120,12 +120,10 @@ const Loja = () => {
         <meta name="description" content="Loja oficial do Vitória Clube de Lisboa. Compre camisolas, kits de treino e acessórios oficiais do clube." />
       </Helmet>
 
-      {/* 1. HERO HEADER (DOURADO ESCURO) */}
-      <div className="bg-gradient-to-r from-yellow-700 to-yellow-800 text-white py-20 px-4 text-center border-b-4 border-vcl-black relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 bg-black/20 border border-white/20 px-4 py-1 rounded-full mb-6 backdrop-blur-sm">
+      {/* 1. HERO HEADER (match 'Torne-se Sócio') */}
+      <div className="bg-[#7f1d1d] text-white py-20 px-4 text-center border-b-4 border-vcl-gold">
+        <div className="max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-black/20 border border-white/10 px-4 py-1 rounded-full mb-6 backdrop-blur-sm">
             <ShoppingBag size={16} className="text-white" />
             <span className="text-xs font-bold uppercase tracking-widest text-gray-100">Loja Oficial</span>
           </div>

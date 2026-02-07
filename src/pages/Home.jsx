@@ -260,7 +260,7 @@ const Home = () => {
               <div className="text-white/80 uppercase text-xs font-bold tracking-widest">Escalões</div>
             </div>
             <div className="p-4">
-              <div className="text-5xl font-black text-vcl-gold mb-2 drop-shadow-md">3</div>
+              <div className="text-5xl font-black text-vcl-gold mb-2 drop-shadow-md">4</div>
               <div className="text-white/80 uppercase text-xs font-bold tracking-widest">Modalidades</div>
             </div>
           </div>
@@ -498,16 +498,6 @@ const Home = () => {
             <img 
               src={sponsor1} 
               alt="Patrocinador Oficial 1" 
-              className="h-32 md:h-40 w-auto object-contain grayscale hover:grayscale-0 transition duration-300 cursor-pointer" 
-            />
-
-            {/* Divisória vertical escura */}
-            <div className="hidden md:block w-px h-24 bg-zinc-700"></div>
-
-            {/* Patrocinador 2 */}
-            <img 
-              src={sponsor2} 
-              alt="Patrocinador Oficial 2" 
               className="h-32 md:h-40 w-auto object-contain grayscale hover:grayscale-0 transition duration-300 cursor-pointer" 
             />
 

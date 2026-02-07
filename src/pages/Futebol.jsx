@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Trophy, Calendar, Users, Shirt, Loader, AlertCircle } from 'lucide-react';
+import { Trophy, Calendar, Users, Shirt, Loader, AlertCircle, Clock } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import vclLogo from '../assets/VCL.png';
 
 const Futebol = () => {
   // --- ESTADOS ---
   const [jogos, setJogos] = useState([]);
   const [tabela, setTabela] = useState([]);
   const [plantel, setPlantel] = useState([]);
+  const [treinos, setTreinos] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const [escalaoAtivo, setEscalaoAtivo] = useState('Veteranos'); 
   const [vistaAtiva, setVistaAtiva] = useState('classificacao1');
 
-  // --- LINKS DO GOOGLE SHEETS (Mantém os teus links aqui!) ---
+  // --- LINKS DO GOOGLE SHEETS ---
   const LINK_JOGOS = import.meta.env.VITE_GOOGLE_SHEETS_JOGOS;
   const LINK_TABELA = import.meta.env.VITE_GOOGLE_SHEETS_TABELA;
   const LINK_PLANTEL = import.meta.env.VITE_GOOGLE_SHEETS_PLANTEL;
+  const LINK_TREINOS = import.meta.env.VITE_GOOGLE_SHEETS_TREINOS;
 
   // --- CARREGAR DADOS ---
   useEffect(() => {
@@ -25,6 +28,7 @@ const Futebol = () => {
         Papa.parse(LINK_JOGOS, { download: true, header: true, complete: (res) => setJogos(res.data) });
         Papa.parse(LINK_TABELA, { download: true, header: true, complete: (res) => setTabela(res.data) });
         Papa.parse(LINK_PLANTEL, { download: true, header: true, complete: (res) => setPlantel(res.data) });
+        if (LINK_TREINOS) Papa.parse(LINK_TREINOS, { download: true, header: true, complete: (res) => setTreinos(res.data) });
       } catch (error) {
         console.error("Erro ao carregar CSVs:", error);
       } finally {
@@ -47,12 +51,23 @@ const Futebol = () => {
 
   const plantelFiltrado = plantel.filter(p => normalizar(p.escalao) === normalizar(escalaoAtivo));
 
+  const treinosFiltrados = treinos.filter(t => normalizar(t.escalao) === normalizar(escalaoAtivo));
+
   const listaEscaloes = [
     'Veteranos', 'Juniores', 'Juvenis', 'Iniciados A', 'Iniciados B', 
     'Infantis A', 'Infantis B', 'Benjamins'
   ];
 
-  // --- HELPER TABELA (ATUALIZADO COM V-E-D) ---
+  // Quando muda de escalão, ajusta a vista se necessário
+  const handleChangeEscalao = (novoEscalao) => {
+    setEscalaoAtivo(novoEscalao);
+    // Se for Veteranos e a vista é uma fase, muda para jogos
+    if (novoEscalao === 'Veteranos' && ['classificacao1', 'classificacao2', 'jogos2', 'treinos'].includes(vistaAtiva)) {
+      setVistaAtiva('jogos1');
+    }
+  };
+
+  // --- HELPER TABELA ---
   const renderTabela = (dados, faseTitulo) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in">
       <div className="p-6 border-b border-gray-100">
@@ -68,12 +83,9 @@ const Futebol = () => {
                 <th className="px-4 py-3 text-center">Pos</th>
                 <th className="px-4 py-3 w-full">Clube</th>
                 <th className="px-4 py-3 text-center" title="Jogos">J</th>
-                
-                {/* NOVAS COLUNAS */}
                 <th className="px-3 py-3 text-center text-green-600" title="Vitórias">V</th>
                 <th className="px-3 py-3 text-center text-yellow-600" title="Empates">E</th>
                 <th className="px-3 py-3 text-center text-red-600" title="Derrotas">D</th>
-                
                 <th className="px-4 py-3 text-center text-vcl-black bg-gray-100">Pts</th>
               </tr>
             </thead>
@@ -88,12 +100,9 @@ const Futebol = () => {
                     {row.equipa}
                   </td>
                   <td className="px-4 py-3 text-center text-gray-600 font-medium">{row.j}</td>
-                  
-                  {/* DADOS V-E-D */}
                   <td className="px-3 py-3 text-center text-gray-500">{row.v}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.e}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.d}</td>
-                  
                   <td className="px-4 py-3 text-center font-black text-lg text-vcl-black bg-gray-50/50">{row.pts}</td>
                 </tr>
               ))}
@@ -101,6 +110,29 @@ const Futebol = () => {
           </table>
         </div>
       ) : <div className="p-10 text-center text-gray-500 flex flex-col items-center"><AlertCircle className="mb-2 opacity-50"/>Ainda não há dados para a {faseTitulo}.</div>}
+    </div>
+  );
+
+  // --- HELPER TREINOS ---
+  const renderTreinos = (dados) => (
+    <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 animate-fade-in">
+      <h2 className="text-xl font-bold text-vcl-black mb-6 flex items-center gap-2">
+        <Clock className="text-vcl-red" /> Horários de Treinos: {escalaoAtivo}
+      </h2>
+      {dados.length > 0 ? (
+        <div className="space-y-4">
+          {dados.map((treino, index) => (
+            <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-vcl-red transition group">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-3 md:mb-0">
+                  <h3 className="font-bold text-vcl-black text-lg">{treino.dia || 'Dia'}</h3>
+                  <p className="text-vcl-red font-semibold text-sm mt-1">{treino.hora || 'Horário não disponível'}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : <div className="p-10 text-center text-gray-500 flex flex-col items-center"><AlertCircle className="mb-2 opacity-50"/>Horários de treinos ainda não definidos.</div>}
     </div>
   );
 
@@ -154,7 +186,7 @@ const Futebol = () => {
           {listaEscaloes.map((esc) => (
             <button
               key={esc}
-              onClick={() => setEscalaoAtivo(esc)}
+              onClick={() => handleChangeEscalao(esc)}
               className={`whitespace-nowrap px-6 py-3 rounded font-bold text-sm uppercase transition-all
                 ${escalaoAtivo === esc ? 'bg-vcl-red text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >
@@ -172,22 +204,38 @@ const Futebol = () => {
                 {escalaoAtivo}
               </div>
               <nav className="flex flex-col text-sm">
-                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Fase 1</div>
-                <button onClick={() => setVistaAtiva('classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
-                <button onClick={() => setVistaAtiva('jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
-                
-                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Fase 2</div>
-                <button onClick={() => setVistaAtiva('classificacao2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao2' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
-                <button onClick={() => setVistaAtiva('jogos2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos2' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
-                
-                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Equipa</div>
-                <button onClick={() => setVistaAtiva('plantel')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantel' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                {escalaoAtivo === 'Veteranos' ? (
+                  <>
+                    {/* Menu Veteranos */}
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Equipa</div>
+                    <button onClick={() => setVistaAtiva('jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => setVistaAtiva('plantel')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantel' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                  </>
+                ) : (
+                  <>
+                    {/* Menu normal: Fase 1, Fase 2 e Equipa (Plantel + Treinos) */}
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Fase 1</div>
+                    <button onClick={() => setVistaAtiva('classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => setVistaAtiva('jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Fase 2</div>
+                    <button onClick={() => setVistaAtiva('classificacao2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao2' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => setVistaAtiva('jogos2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos2' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    
+                    {/* Secção Equipa Atualizada com Plantel e Treinos */}
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Equipa</div>
+                    <button onClick={() => setVistaAtiva('plantel')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantel' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => setVistaAtiva('treinos')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinos' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+                  </>
+                )}
               </nav>
             </div>
           </div>
 
           {/* ÁREA PRINCIPAL */}
           <div className="lg:col-span-3">
+            
+            {vistaAtiva === 'treinos' && renderTreinos(treinosFiltrados)}
             
             {vistaAtiva === 'classificacao1' && renderTabela(filtrarTabela('1'), 'Fase 1')}
             {vistaAtiva === 'jogos1' && renderJogos(filtrarJogos('1'), 'Fase 1')}
@@ -208,7 +256,7 @@ const Futebol = () => {
                             {jogador.foto_url ? (
                               <img src={jogador.foto_url} alt={jogador.nome} className="w-full h-full object-cover object-top group-hover:scale-110 transition duration-500" />
                             ) : (
-                              <Shirt size={64} className="text-gray-300 group-hover:text-vcl-red group-hover:scale-110 transition duration-500" />
+                              <img src={vclLogo} alt="VCL Logo" className="w-24 h-24 object-contain grayscale group-hover:grayscale-0 transition duration-500" />
                             )}
                             <div className="absolute top-2 right-2 bg-vcl-black text-white text-xs font-bold px-2 py-1 rounded shadow-sm">#{jogador.numero}</div>
                           </div>

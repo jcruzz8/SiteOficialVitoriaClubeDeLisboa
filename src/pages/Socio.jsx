@@ -123,7 +123,7 @@ const Socio = () => {
   // --- CÁLCULOS FINAIS ---
   const valorPlano = getPrecoPlanoSelecionado();
   const custoExtra = tipoInscricao === 'novo' ? 7.50 : 0; // Jóia + Cartão
-  const totalPagar = valorPlano + custoExtra;
+  const totalPagar = tipoInscricao === 'novo' ? valorPlano + custoExtra : 0;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -216,7 +216,7 @@ const Socio = () => {
           <div className="md:col-span-2 bg-gray-100 rounded-xl p-8 border border-gray-200">
             <div className="flex items-center gap-2 mb-4 text-gray-400 font-bold uppercase text-xs tracking-widest"><FileText size={14} /> Regulamento Interno</div>
             <h4 className="font-bold text-vcl-black mb-3">Sócios Reformados & Quotas Diferenciadas</h4>
-            <p className="text-sm text-gray-600 leading-relaxed text-justify">Os sócios efectivos reformados, cuja pensão de reforma ou outra seja inferior a um salário mínimo nacional, fazendo prova anual, com documento comprovativo do valor da sua pensão, agté ao final do mês de Novembro ou quando solicitado pela Direção, terão uma quota diferenciada do valor da quota estipulada para os sócios efetivos, não podendo nunca ser superior a 50% da quota mais elevada que estiver estipulada para os sócios efetivos.</p>
+            <p className="text-sm text-gray-600 leading-relaxed text-justify">Os sócios efectivos reformados, cuja pensão de reforma ou outra seja inferior a um salário mínimo nacional, fazendo prova anual, com documento comprovativo do valor da sua pensão, até ao final do mês de Novembro ou quando solicitado pela Direção, terão uma quota diferenciada do valor da quota estipulada para os sócios efetivos, não podendo nunca ser superior a 50% da quota mais elevada que estiver estipulada para os sócios efetivos.</p>
           </div>
           <div className="md:col-span-1 bg-vcl-red text-white rounded-xl p-8 flex flex-col justify-center items-center text-center relative overflow-hidden shadow-lg">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -284,15 +284,17 @@ const Socio = () => {
                     <h4 className="flex items-center gap-2 font-bold text-blue-800 mb-4 text-lg">
                       <AlertCircle size={20} /> Passos para Finalizar:
                     </h4>
-                    <p className="text-blue-800 mb-3">Para emitirmos o teu cartão e validarmos a inscrição, envia os seguintes documentos para o nosso email:</p>
+                    <p className="text-blue-800 mb-3">Para {tipoInscricao === 'novo' ? 'emitirmos o teu cartão e validarmos a inscrição' : 'atualizarmos os teus dados'}, envia os seguintes documentos para o nosso email:</p>
                     
                     <ul className="space-y-2 mb-4">
                       <li className="flex items-center gap-2 text-blue-700 font-bold">
                         <Check size={16} /> Uma Foto (Atual) Tipo Cartão De Cidadão Ou Passe
                       </li>
-                      <li className="flex items-center gap-2 text-blue-700 font-bold">
-                        <Check size={16} /> O Comprovativo da Transferência Bancária
-                      </li>
+                      {tipoInscricao === 'novo' && (
+                        <li className="flex items-center gap-2 text-blue-700 font-bold">
+                          <Check size={16} /> O Comprovativo da Transferência Bancária
+                        </li>
+                      )}
                     </ul>
 
                     <div className="mt-4 pt-4 border-t border-blue-200">
@@ -373,21 +375,30 @@ const Socio = () => {
                   </div>
 
                   {/* RESUMO DE PAGAMENTO */}
-                  <div className="mt-8 bg-zinc-100 rounded-xl p-6 border border-zinc-200">
-                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-vcl-black"><Banknote size={20} /> Resumo de Contas</h3>
-                    <div className="flex flex-col gap-2 mb-4 text-sm text-gray-700">
-                      <div className="flex justify-between"><span>Quota Anual ({formData.plano}):</span><span className="font-bold">{valorPlano.toFixed(2).replace('.', ',')}€</span></div>
-                      {tipoInscricao === 'novo' && (<div className="flex justify-between text-vcl-red"><span>Jóia + Cartão (Taxa Única):</span><span className="font-bold">7,50€</span></div>)}
-                      <div className="border-t border-gray-300 my-1"></div>
-                      <div className="flex justify-between text-lg font-black text-vcl-black"><span>TOTAL A PAGAR:</span><span>{totalPagar.toFixed(2).replace('.', ',')}€</span></div>
+                  {totalPagar > 0 && (
+                    <div className="mt-8 bg-zinc-100 rounded-xl p-6 border border-zinc-200">
+                      <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-vcl-black"><Banknote size={20} /> Resumo de Contas</h3>
+                      <div className="flex flex-col gap-2 mb-4 text-sm text-gray-700">
+                        <div className="flex justify-between"><span>Quota Anual ({formData.plano}):</span><span className="font-bold">{valorPlano.toFixed(2).replace('.', ',')}€</span></div>
+                        {tipoInscricao === 'novo' && (<div className="flex justify-between text-vcl-red"><span>Jóia + Cartão (Taxa Única):</span><span className="font-bold">7,50€</span></div>)}
+                        <div className="border-t border-gray-300 my-1"></div>
+                        <div className="flex justify-between text-lg font-black text-vcl-black"><span>TOTAL A PAGAR:</span><span>{totalPagar.toFixed(2).replace('.', ',')}€</span></div>
+                      </div>
+                      <div className="bg-white p-4 rounded border border-gray-300">
+                        <p className="text-xs text-gray-500 uppercase font-bold mb-1">Método de Pagamento: Transferência Bancária</p>
+                        <p className="text-sm mb-2 text-gray-600">Por favor realiza a transferência para o seguinte IBAN:</p>
+                        <div className="font-mono text-lg font-bold text-center bg-gray-50 p-2 rounded tracking-wider border border-gray-200 select-all">PT50 XXXX XXXX XXXX XXXX X</div>
+                        <p className="text-xs text-center text-gray-400 mt-2">Copia este IBAN para o teu Homebanking</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-4 rounded border border-gray-300">
-                      <p className="text-xs text-gray-500 uppercase font-bold mb-1">Método de Pagamento: Transferência Bancária</p>
-                      <p className="text-sm mb-2 text-gray-600">Por favor realiza a transferência para o seguinte IBAN:</p>
-                      <div className="font-mono text-lg font-bold text-center bg-gray-50 p-2 rounded tracking-wider border border-gray-200 select-all">PT50 XXXX XXXX XXXX XXXX X</div>
-                      <p className="text-xs text-center text-gray-400 mt-2">Copia este IBAN para o teu Homebanking</p>
+                  )}
+
+                  {totalPagar === 0 && (
+                    <div className="mt-8 bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                      <h3 className="font-bold text-lg mb-2 text-green-800">Atualização Gratuita</h3>
+                      <p className="text-green-700">A atualização dos dados de sócio não tem qualquer custo associado.</p>
                     </div>
-                  </div>
+                  )}
 
                   {formStatus === 'error' && <div className="bg-red-50 text-red-600 p-4 rounded-lg mt-6 text-sm font-bold text-center">Ocorreu um erro ao enviar.</div>}
 

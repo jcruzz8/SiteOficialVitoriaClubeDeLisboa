@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Trophy, Calendar, Users, Shirt, Loader, AlertCircle, Clock } from 'lucide-react';
+import { Trophy, Calendar, Users, AlertCircle, Clock } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import vclLogo from '../assets/VCL.png';
+import vclLogo from '../assets/VCL.png'; // Confirma se o caminho está certo
 
 const Futebol = () => {
   // --- ESTADOS ---
@@ -10,10 +10,13 @@ const Futebol = () => {
   const [tabela, setTabela] = useState([]);
   const [plantel, setPlantel] = useState([]);
   const [treinos, setTreinos] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
   
   const [escalaoAtivo, setEscalaoAtivo] = useState('Veteranos'); 
-  const [vistaAtiva, setVistaAtiva] = useState('classificacao1');
+  
+  // ALTERAÇÃO 1: Começamos com 'jogos1' para não mostrar tabela vazia nos Veteranos
+  const [vistaAtiva, setVistaAtiva] = useState('jogos1');
 
   // --- LINKS DO GOOGLE SHEETS ---
   const LINK_JOGOS = import.meta.env.VITE_GOOGLE_SHEETS_JOGOS;
@@ -36,7 +39,7 @@ const Futebol = () => {
       }
     };
     carregarDados();
-  }, []);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // --- FILTROS INTELIGENTES ---
   const normalizar = (str) => str ? str.trim().toLowerCase() : '';
@@ -58,12 +61,26 @@ const Futebol = () => {
     'Infantis A', 'Infantis B', 'Benjamins'
   ];
 
-  // Quando muda de escalão, ajusta a vista se necessário
+  // --- ALTERAÇÃO 2: LÓGICA DE TROCA DE ESCALÃO ---
   const handleChangeEscalao = (novoEscalao) => {
     setEscalaoAtivo(novoEscalao);
-    // Se for Veteranos e a vista é uma fase, muda para jogos
-    if (novoEscalao === 'Veteranos' && ['classificacao1', 'classificacao2', 'jogos2', 'treinos'].includes(vistaAtiva)) {
-      setVistaAtiva('jogos1');
+    
+    // Se mudarmos para Veteranos, força a ir para 'jogos1' ou 'plantel', nunca classificação
+    if (novoEscalao === 'Veteranos') {
+      if (vistaAtiva.includes('classificacao')) {
+        setVistaAtiva('jogos1');
+      }
+    } else {
+      // Se mudarmos para outro escalão (ex: Juniores) e estivermos em 'jogos1',
+      // podemos opcionalmente mudar para 'classificacao1' se preferires que mostre a tabela primeiro.
+      // Por agora, mantemos a vista que o utilizador tinha, a menos que seja inválida.
+      if (vistaAtiva === 'treinos' || vistaAtiva === 'plantel') {
+         // Mantém
+      } else {
+         // Se vieres de Veteranos (jogos1) para Juniores, queres ver tabela ou jogos?
+         // Vamos por defeito mostrar tabela para os competitivos
+         if (vistaAtiva === 'jogos1') setVistaAtiva('classificacao1');
+      }
     }
   };
 
@@ -127,6 +144,10 @@ const Futebol = () => {
                 <div className="mb-3 md:mb-0">
                   <h3 className="font-bold text-vcl-black text-lg">{treino.dia || 'Dia'}</h3>
                   <p className="text-vcl-red font-semibold text-sm mt-1">{treino.hora || 'Horário não disponível'}</p>
+                </div>
+                <div className="text-gray-600">
+                  <p className="text-sm"><span className="font-semibold">Local:</span> {treino.local || 'Local não especificado'}</p>
+                  {treino.notas && <p className="text-sm mt-1 text-gray-500"><span className="font-semibold">Notas:</span> {treino.notas}</p>}
                 </div>
               </div>
             </div>

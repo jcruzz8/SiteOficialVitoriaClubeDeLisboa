@@ -15,7 +15,7 @@ const Futebol = () => {
   
   const [escalaoAtivo, setEscalaoAtivo] = useState('Veteranos'); 
   
-  // ALTERAÇÃO 1: Começamos com 'jogos1' para não mostrar tabela vazia nos Veteranos
+  // Começamos com 'jogos1' para não mostrar tabela vazia nos Veteranos
   const [vistaAtiva, setVistaAtiva] = useState('jogos1');
 
   // --- LINKS DO GOOGLE SHEETS ---
@@ -61,7 +61,7 @@ const Futebol = () => {
     'Infantis A', 'Infantis B', 'Benjamins'
   ];
 
-  // --- ALTERAÇÃO 2: LÓGICA DE TROCA DE ESCALÃO ---
+  // --- LÓGICA DE TROCA DE ESCALÃO ---
   const handleChangeEscalao = (novoEscalao) => {
     setEscalaoAtivo(novoEscalao);
     
@@ -71,20 +71,12 @@ const Futebol = () => {
         setVistaAtiva('jogos1');
       }
     } else {
-      // Se mudarmos para outro escalão (ex: Juniores) e estivermos em 'jogos1',
-      // podemos opcionalmente mudar para 'classificacao1' se preferires que mostre a tabela primeiro.
-      // Por agora, mantemos a vista que o utilizador tinha, a menos que seja inválida.
-      if (vistaAtiva === 'treinos' || vistaAtiva === 'plantel') {
-         // Mantém
-      } else {
-         // Se vieres de Veteranos (jogos1) para Juniores, queres ver tabela ou jogos?
-         // Vamos por defeito mostrar tabela para os competitivos
-         if (vistaAtiva === 'jogos1') setVistaAtiva('classificacao1');
-      }
+      // Se vieres de Veteranos (jogos1) para Juniores, mostrar tabela por defeito
+      if (vistaAtiva === 'jogos1') setVistaAtiva('classificacao1');
     }
   };
 
-  // --- HELPER TABELA ---
+  // --- HELPER TABELA (ATUALIZADO COM GM, GS, DG) ---
   const renderTabela = (dados, faseTitulo) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in">
       <div className="p-6 border-b border-gray-100">
@@ -100,9 +92,17 @@ const Futebol = () => {
                 <th className="px-4 py-3 text-center">Pos</th>
                 <th className="px-4 py-3 w-full">Clube</th>
                 <th className="px-4 py-3 text-center" title="Jogos">J</th>
+                
+                {/* V-E-D */}
                 <th className="px-3 py-3 text-center text-green-600" title="Vitórias">V</th>
                 <th className="px-3 py-3 text-center text-yellow-600" title="Empates">E</th>
                 <th className="px-3 py-3 text-center text-red-600" title="Derrotas">D</th>
+
+                {/* NOVAS COLUNAS: GM - GS - DG */}
+                <th className="px-3 py-3 text-center text-gray-500" title="Golos Marcados">GM</th>
+                <th className="px-3 py-3 text-center text-gray-500" title="Golos Sofridos">GS</th>
+                <th className="px-3 py-3 text-center text-gray-500" title="Diferença de Golos">DG</th>
+                
                 <th className="px-4 py-3 text-center text-vcl-black bg-gray-100">Pts</th>
               </tr>
             </thead>
@@ -117,9 +117,17 @@ const Futebol = () => {
                     {row.equipa}
                   </td>
                   <td className="px-4 py-3 text-center text-gray-600 font-medium">{row.j}</td>
+                  
+                  {/* DADOS V-E-D */}
                   <td className="px-3 py-3 text-center text-gray-500">{row.v}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.e}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.d}</td>
+
+                  {/* DADOS GM-GS-DG */}
+                  <td className="px-3 py-3 text-center text-gray-500">{row.gm}</td>
+                  <td className="px-3 py-3 text-center text-gray-500">{row.gs}</td>
+                  <td className="px-3 py-3 text-center font-bold text-gray-600">{row.dg}</td>
+                  
                   <td className="px-4 py-3 text-center font-black text-lg text-vcl-black bg-gray-50/50">{row.pts}</td>
                 </tr>
               ))}
@@ -144,10 +152,6 @@ const Futebol = () => {
                 <div className="mb-3 md:mb-0">
                   <h3 className="font-bold text-vcl-black text-lg">{treino.dia || 'Dia'}</h3>
                   <p className="text-vcl-red font-semibold text-sm mt-1">{treino.hora || 'Horário não disponível'}</p>
-                </div>
-                <div className="text-gray-600">
-                  <p className="text-sm"><span className="font-semibold">Local:</span> {treino.local || 'Local não especificado'}</p>
-                  {treino.notas && <p className="text-sm mt-1 text-gray-500"><span className="font-semibold">Notas:</span> {treino.notas}</p>}
                 </div>
               </div>
             </div>

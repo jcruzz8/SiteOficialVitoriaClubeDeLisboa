@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Trophy, Calendar, Users, Shirt, Loader, AlertCircle, Clock } from 'lucide-react';
+import { Trophy, Calendar, Users, AlertCircle, Clock } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import vclLogo from '../assets/VCL.png';
+import vclLogo from '../assets/VCL.png'; // Confirma se o caminho está certo
 
 const Futebol = () => {
   // --- ESTADOS ---
@@ -10,10 +10,13 @@ const Futebol = () => {
   const [tabela, setTabela] = useState([]);
   const [plantel, setPlantel] = useState([]);
   const [treinos, setTreinos] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
   
   const [escalaoAtivo, setEscalaoAtivo] = useState('Veteranos'); 
-  const [vistaAtiva, setVistaAtiva] = useState('classificacao1');
+  
+  // Começamos com 'jogos1' para não mostrar tabela vazia nos Veteranos
+  const [vistaAtiva, setVistaAtiva] = useState('jogos1');
 
   // --- LINKS DO GOOGLE SHEETS ---
   const LINK_JOGOS = import.meta.env.VITE_GOOGLE_SHEETS_JOGOS;
@@ -36,7 +39,7 @@ const Futebol = () => {
       }
     };
     carregarDados();
-  }, []);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // --- FILTROS INTELIGENTES ---
   const normalizar = (str) => str ? str.trim().toLowerCase() : '';
@@ -58,16 +61,22 @@ const Futebol = () => {
     'Infantis A', 'Infantis B', 'Benjamins'
   ];
 
-  // Quando muda de escalão, ajusta a vista se necessário
+  // --- LÓGICA DE TROCA DE ESCALÃO ---
   const handleChangeEscalao = (novoEscalao) => {
     setEscalaoAtivo(novoEscalao);
-    // Se for Veteranos e a vista é uma fase, muda para jogos
-    if (novoEscalao === 'Veteranos' && ['classificacao1', 'classificacao2', 'jogos2', 'treinos'].includes(vistaAtiva)) {
-      setVistaAtiva('jogos1');
+    
+    // Se mudarmos para Veteranos, força a ir para 'jogos1' ou 'plantel', nunca classificação
+    if (novoEscalao === 'Veteranos') {
+      if (vistaAtiva.includes('classificacao')) {
+        setVistaAtiva('jogos1');
+      }
+    } else {
+      // Se vieres de Veteranos (jogos1) para Juniores, mostrar tabela por defeito
+      if (vistaAtiva === 'jogos1') setVistaAtiva('classificacao1');
     }
   };
 
-  // --- HELPER TABELA ---
+  // --- HELPER TABELA (ATUALIZADO COM GM, GS, DG) ---
   const renderTabela = (dados, faseTitulo) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in">
       <div className="p-6 border-b border-gray-100">
@@ -83,9 +92,17 @@ const Futebol = () => {
                 <th className="px-4 py-3 text-center">Pos</th>
                 <th className="px-4 py-3 w-full">Clube</th>
                 <th className="px-4 py-3 text-center" title="Jogos">J</th>
+                
+                {/* V-E-D */}
                 <th className="px-3 py-3 text-center text-green-600" title="Vitórias">V</th>
                 <th className="px-3 py-3 text-center text-yellow-600" title="Empates">E</th>
                 <th className="px-3 py-3 text-center text-red-600" title="Derrotas">D</th>
+
+                {/* NOVAS COLUNAS: GM - GS - DG */}
+                <th className="px-3 py-3 text-center text-gray-500" title="Golos Marcados">GM</th>
+                <th className="px-3 py-3 text-center text-gray-500" title="Golos Sofridos">GS</th>
+                <th className="px-3 py-3 text-center text-gray-500" title="Diferença de Golos">DG</th>
+                
                 <th className="px-4 py-3 text-center text-vcl-black bg-gray-100">Pts</th>
               </tr>
             </thead>
@@ -100,9 +117,17 @@ const Futebol = () => {
                     {row.equipa}
                   </td>
                   <td className="px-4 py-3 text-center text-gray-600 font-medium">{row.j}</td>
+                  
+                  {/* DADOS V-E-D */}
                   <td className="px-3 py-3 text-center text-gray-500">{row.v}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.e}</td>
                   <td className="px-3 py-3 text-center text-gray-500">{row.d}</td>
+
+                  {/* DADOS GM-GS-DG */}
+                  <td className="px-3 py-3 text-center text-gray-500">{row.gm}</td>
+                  <td className="px-3 py-3 text-center text-gray-500">{row.gs}</td>
+                  <td className="px-3 py-3 text-center font-bold text-gray-600">{row.dg}</td>
+                  
                   <td className="px-4 py-3 text-center font-black text-lg text-vcl-black bg-gray-50/50">{row.pts}</td>
                 </tr>
               ))}

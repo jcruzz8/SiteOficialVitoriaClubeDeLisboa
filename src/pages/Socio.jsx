@@ -387,7 +387,7 @@ const Socio = () => {
                       <div className="bg-white p-4 rounded border border-gray-300">
                         <p className="text-xs text-gray-500 uppercase font-bold mb-1">Método de Pagamento: Transferência Bancária</p>
                         <p className="text-sm mb-2 text-gray-600">Por favor realiza a transferência para o seguinte IBAN:</p>
-                        <div className="font-mono text-lg font-bold text-center bg-gray-50 p-2 rounded tracking-wider border border-gray-200 select-all">PT50 XXXX XXXX XXXX XXXX X</div>
+                        <div className="font-mono text-lg font-bold text-center bg-gray-50 p-2 rounded tracking-wider border border-gray-200 select-all">PT50 0036 0000 9910 5922 9832 5</div>
                         <p className="text-xs text-center text-gray-400 mt-2">Copia este IBAN para o teu Homebanking</p>
                       </div>
                     </div>

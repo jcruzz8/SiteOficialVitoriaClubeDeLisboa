@@ -257,7 +257,7 @@ const Loja = () => {
                     </h3>
                     <p className="text-sm text-yellow-900 mb-3">Transferência Bancária</p>
                     <div className="bg-white p-3 rounded border border-yellow-300 font-mono font-bold text-center text-gray-700 select-all">
-                      XXXXXXXXX
+                      PT50 0036 0000 9910 5922 9832 5
                     </div>
                     <p className="text-xs text-center text-yellow-700 mt-2">Copia o IBAN acima.</p>
                   </div>

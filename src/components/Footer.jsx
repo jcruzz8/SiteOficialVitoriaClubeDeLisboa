@@ -55,10 +55,6 @@ const Footer = () => {
                 <Mail className="text-vcl-red shrink-0" size={18} />
                 <span className="truncate">marketing.vitoriacl@gmail.com</span>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="text-vcl-red shrink-0" size={18} />
-                <span>+351 xxx xxx xxx</span>
-              </div>
             </div>
           </div>
 

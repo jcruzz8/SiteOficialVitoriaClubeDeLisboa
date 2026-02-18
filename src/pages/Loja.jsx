@@ -3,20 +3,40 @@ import { ShoppingCart, X, Plus, Trash2, Check, Banknote, ShoppingBag, AlertCircl
 import { Helmet } from 'react-helmet-async';
 
 // --- IMPORTA AS TUAS IMAGENS AQUI ---
+// Certifica-te que os nomes dos ficheiros na pasta assets correspondem a estes imports
+import camisolaVermelha from '../assets/CamisolaVermelha.png';
 import camisolaBranca from '../assets/CamisolaBranca.png';
 import camisolaPreta from '../assets/CamisolaPreta.png';
-import camisolaVermelha from '../assets/CamisolaVermelha.png';
+import camisolaGR from '../assets/CamisolaGR.png';
+import kitJogo from '../assets/KitJogo.png';
+import kitGR from '../assets/KitGR.png';
 import kitTreino from '../assets/KitTreino.png';
-import cachecol from '../assets/CACHECOL.png';
+import fatoTreino from '../assets/FatoTreino.png';
+import impermeavel from '../assets/Impermeavel.png';
+import cachecolVCL from '../assets/Cachecol.png';
+import cachecolSub from '../assets/CachecolSublimado.png';
+import malaViagem from '../assets/MalaViagem.png';
 
 const Loja = () => {
-  // --- DADOS DOS PRODUTOS ---
+  // --- DADOS DOS PRODUTOS (Atualizado com a nova lista) ---
   const products = [
-    { id: 1, name: 'Camisola Principal Branca', price: 20, image: camisolaBranca, type: 'wear' },
-    { id: 2, name: 'Camisola Principal Preta', price: 20, image: camisolaPreta, type: 'wear' },
-    { id: 3, name: 'Camisola Principal Vermelha', price: 20, image: camisolaVermelha, type: 'wear' },
-    { id: 4, name: 'Kit de Treino', price: 30, image: kitTreino, type: 'wear' },
-    { id: 5, name: 'Cachecol Oficial', price: 10, image: cachecol, type: 'acc' },
+    // Escalão de Preços: 20€
+    { id: 1, name: 'Camisola Principal (Vermelha)', price: 20, image: camisolaVermelha, type: 'wear' },
+    { id: 2, name: 'Camisola Alternativa (Branca)', price: 20, image: camisolaBranca, type: 'wear' },
+    { id: 3, name: 'Camisola Alternativa (Preta)', price: 20, image: camisolaPreta, type: 'wear' },
+    { id: 4, name: 'Camisola Guarda-Redes', price: 20, image: camisolaGR, type: 'wear' },
+    
+    // Kits e Conjuntos
+    { id: 5, name: 'Kit de Jogo Completo', price: 35, image: kitJogo, type: 'wear' },
+    { id: 6, name: 'Kit de Guarda-Redes', price: 35, image: kitGR, type: 'wear' },
+    { id: 7, name: 'Kit de Treino', price: 25, image: kitTreino, type: 'wear' },
+    { id: 8, name: 'Fato de Treino', price: 40, image: fatoTreino, type: 'wear' },
+    { id: 9, name: 'Impermeável', price: 25, image: impermeavel, type: 'wear' },
+
+    // Acessórios
+    { id: 10, name: 'Cachecol VCL Tradicional', price: 10, image: cachecolVCL, type: 'acc' },
+    { id: 11, name: 'Cachecol Sublimado', price: 7.50, image: cachecolSub, type: 'acc' },
+    { id: 12, name: 'Mala de Viagem', price: 30, image: malaViagem, type: 'acc' },
   ];
 
   // --- ESTADOS ---
@@ -24,11 +44,11 @@ const Loja = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'form', 'success'
   
-  // Dados do Comprador (AGORA COM TELEMÓVEL)
+  // Dados do Comprador
   const [buyerData, setBuyerData] = useState({ 
     nome: '', 
     socioNum: '',
-    telemovel: '' // Novo campo
+    telemovel: '' 
   });
 
   // --- FUNÇÕES DO CARRINHO ---
@@ -60,7 +80,7 @@ const Loja = () => {
     
     // 1. Formatar o carrinho para texto legível no email
     const resumoCarrinho = cart.map(item => 
-      `- ${item.name} (Tam: ${item.size}) x${item.qty} | ${item.price * item.qty}€`
+      `- ${item.name} (Tam: ${item.size}) x${item.qty} | ${(item.price * item.qty).toFixed(2)}€`
     ).join('\n');
 
     // 2. Preparar dados para o Web3Forms
@@ -69,11 +89,10 @@ const Loja = () => {
       subject: `Nova Encomenda Loja: ${buyerData.nome}`,
       from_name: "Site VCL Loja",
       buyer_name: buyerData.nome,
-      buyer_phone: buyerData.telemovel, // Envia o telemóvel
+      buyer_phone: buyerData.telemovel, 
       buyer_socio_num: buyerData.socioNum || "Não Sócio",
       order_summary: resumoCarrinho,
       order_total: `${total.toFixed(2)}€`,
-      // Mensagem personalizada para o corpo do email
       message: `
         DADOS DO COMPRADOR:
         Nome: ${buyerData.nome}
@@ -120,7 +139,7 @@ const Loja = () => {
         <meta name="description" content="Loja oficial do Vitória Clube de Lisboa. Compre camisolas, kits de treino e acessórios oficiais do clube." />
       </Helmet>
 
-      {/* 1. HERO HEADER (match 'Torne-se Sócio') */}
+      {/* 1. HERO HEADER */}
       <div className="bg-[#7f1d1d] text-white py-20 px-4 text-center border-b-4 border-vcl-gold">
         <div className="max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-black/20 border border-white/10 px-4 py-1 rounded-full mb-6 backdrop-blur-sm">
@@ -194,7 +213,7 @@ const Loja = () => {
                           <div className="flex-1">
                             <h3 className="font-bold text-sm text-vcl-black">{item.name}</h3>
                             <div className="text-xs text-gray-500 mt-1">Tamanho: <span className="font-bold">{item.size}</span></div>
-                            <div className="text-vcl-red font-bold mt-1">{item.price}€ x {item.qty}</div>
+                            <div className="text-vcl-red font-bold mt-1">{item.price.toFixed(2)}€ x {item.qty}</div>
                           </div>
                           <button onClick={() => removeFromCart(item.id, item.size)} className="text-gray-400 hover:text-red-600 transition">
                             <Trash2 size={18} />
@@ -225,7 +244,7 @@ const Loja = () => {
                         />
                       </div>
 
-                      {/* TELEMÓVEL (NOVO CAMPO) */}
+                      {/* TELEMÓVEL */}
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Telemóvel <span className="text-red-500">*</span></label>
                         <input 
@@ -355,7 +374,7 @@ const ProductCard = ({ product, onAdd }) => {
           <div className="text-gray-300 font-bold text-4xl">FOTO</div>
         )}
         <div className="absolute top-3 right-3 bg-vcl-black text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-          {product.price}€
+          {product.price.toFixed(2)}€
         </div>
       </div>
       

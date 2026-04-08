@@ -3,7 +3,7 @@ import Papa from 'papaparse';
 import { ArrowRight, Trophy, Users, Heart, Star, ShoppingBag, ShieldCheck, Calendar, MapPin, Loader, ChevronLeft, ChevronRight, AlertTriangle, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import campoImg from '../assets/campoVitoria.jpeg';
+import campoImg from '../assets/CampoVitoria.jpeg';
 import camisolaImg from '../assets/camisolaPrincipal.png';
 import sponsor1 from '../assets/jfbeato.png';
 

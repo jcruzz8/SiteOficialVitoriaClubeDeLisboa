@@ -12,8 +12,8 @@ import kitJogo from '../assets/KitJogo.png';
 import kitGR from '../assets/KitGR.png';
 import kitTreino from '../assets/KitTreino.png';
 import fatoTreino from '../assets/FatoTreino.png';
-import impermeavel from '../assets/Impermeavel.png';
-import cachecolVCL from '../assets/Cachecol.png';
+import impermeavel from '../assets/IMPERMEAVEL.png';
+import cachecolVCL from '../assets/Cachecol_VCL.png';
 import cachecolSub from '../assets/CachecolSublimado.png';
 import malaViagem from '../assets/MalaViagem.png';
 

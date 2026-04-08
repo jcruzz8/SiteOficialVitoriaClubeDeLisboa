@@ -128,7 +128,7 @@ const Socio = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <Helmet>
-        <title>Vitória Clube de Lisboa - Torne-se Sócio</title>
+        <title>Sócios | Vitória Clube de Lisboa</title>
         <meta name="description" content="Junte-se ao Vitória Clube de Lisboa. Torne-se sócio e faça parte da nossa família. Planos acessíveis e benefícios exclusivos." />
       </Helmet>
       

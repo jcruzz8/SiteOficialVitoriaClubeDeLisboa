@@ -192,7 +192,7 @@ const Futebol = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <Helmet>
-        <title>Vitória Clube de Lisboa - Futebol</title>
+        <title>Futebol | Vitória Clube de Lisboa</title>
         <meta name="description" content="Resultados, calendário e plantel do Vitória Clube de Lisboa. Acompanhe os jogos e classificações das nossas equipas." />
       </Helmet>
       

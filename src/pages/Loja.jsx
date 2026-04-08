@@ -135,7 +135,7 @@ const Loja = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>Vitória Clube de Lisboa - Loja Oficial</title>
+        <title>Loja Oficial | Vitória Clube de Lisboa</title>
         <meta name="description" content="Loja oficial do Vitória Clube de Lisboa. Compre camisolas, kits de treino e acessórios oficiais do clube." />
       </Helmet>
 

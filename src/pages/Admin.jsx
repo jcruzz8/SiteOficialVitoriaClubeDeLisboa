@@ -1,6 +1,270 @@
-import React, { useState } from 'react';
-import { Lock, FileSpreadsheet, ExternalLink, ShieldCheck, ImagePlus, Loader, CheckCircle, Copy } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Lock, FileSpreadsheet, ExternalLink, ShieldCheck, ImagePlus, Loader, CheckCircle, Copy, Pencil, Trash2, X, AlertCircle, Calendar } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import { supabase } from '../supabase'; // A nossa ligação mágica à base de dados
 
+// --- COMPONENTE DOS COMUNICADOS ---
+const SecaoAdminComunicados = () => {
+  const [titulo, setTitulo] = useState('');
+  const [imagemUrl, setImagemUrl] = useState('');
+  const [conteudo, setConteudo] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Novos Estados
+  const [comunicados, setComunicados] = useState([]);
+  const [modoEdicao, setModoEdicao] = useState(false);
+  const [idEdicao, setIdEdicao] = useState(null);
+  
+  // Estado para a nossa Notificação Bonita
+  const [notificacao, setNotificacao] = useState(null); // { tipo: 'sucesso' | 'erro', texto: '' }
+
+  // Função para mostrar a notificação e escondê-la após 3 segundos
+  const mostrarNotificacao = (tipo, texto) => {
+    setNotificacao({ tipo, texto });
+    setTimeout(() => setNotificacao(null), 3000);
+  };
+
+  const modulos = {
+    toolbar: [
+      [{ 'header': [2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  // Carregar os comunicados que já existem na base de dados
+  const fetchComunicados = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comunicados')
+        .select('*')
+        .order('data', { ascending: false });
+      
+      if (error) throw error;
+      setComunicados(data || []);
+    } catch (error) {
+      console.error("Erro ao carregar comunicados:", error);
+    }
+  };
+
+  // Corre assim que a secção aparece no ecrã
+  useEffect(() => {
+    fetchComunicados();
+  }, []);
+
+  const handleGuardar = async (e) => {
+    e.preventDefault();
+    
+    if (!titulo || !conteudo || conteudo === '<p><br></p>') {
+      mostrarNotificacao('erro', "Por favor, preenche o título e o conteúdo.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      if (modoEdicao) {
+        // ATUALIZAR UM EXISTENTE
+        const { error } = await supabase
+          .from('comunicados')
+          .update({ titulo: titulo, imagem: imagemUrl, conteudo: conteudo })
+          .eq('id', idEdicao);
+
+        if (error) throw error;
+        mostrarNotificacao('sucesso', "Comunicado atualizado com sucesso!");
+      } else {
+        // CRIAR UM NOVO
+        const { error } = await supabase
+          .from('comunicados')
+          .insert([
+            { 
+              titulo: titulo, 
+              imagem: imagemUrl, 
+              conteudo: conteudo, 
+              data: new Date().toISOString().split('T')[0] 
+            }
+          ]);
+
+        if (error) throw error;
+        mostrarNotificacao('sucesso', "Comunicado publicado com sucesso!");
+      }
+      
+      // Limpar formulário
+      cancelarEdicao();
+      fetchComunicados(); // Atualiza a tabela em baixo
+
+    } catch (error) {
+      console.error("Erro da Supabase:", error.message);
+      mostrarNotificacao('erro', "Erro ao gravar: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditar = (com) => {
+    setTitulo(com.titulo);
+    setImagemUrl(com.imagem || '');
+    setConteudo(com.conteudo);
+    setModoEdicao(true);
+    setIdEdicao(com.id);
+    // Faz scroll suave até ao topo do formulário
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelarEdicao = () => {
+    setTitulo('');
+    setImagemUrl('');
+    setConteudo('');
+    setModoEdicao(false);
+    setIdEdicao(null);
+  };
+
+  const handleApagar = async (id) => {
+    if (!window.confirm("Atenção! Tens a certeza que queres apagar este comunicado definitivamente?")) return;
+
+    try {
+      const { error } = await supabase
+        .from('comunicados')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      mostrarNotificacao('sucesso', "Comunicado apagado com sucesso!");
+      fetchComunicados(); // Atualiza a tabela
+    } catch (error) {
+      console.error("Erro ao apagar:", error);
+      mostrarNotificacao('erro', "Erro ao apagar o comunicado.");
+    }
+  };
+
+  return (
+    <div className="relative">
+      {/* --- A NOSSA NOTIFICAÇÃO BONITA (TOAST) --- */}
+      {notificacao && (
+        <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-lg shadow-2xl text-white font-bold animate-fade-in ${notificacao.tipo === 'sucesso' ? 'bg-green-600' : 'bg-red-600'}`}>
+          {notificacao.tipo === 'sucesso' ? <CheckCircle size={24} /> : <AlertCircle size={24} />}
+          {notificacao.texto}
+        </div>
+      )}
+
+      {/* --- FORMULÁRIO --- */}
+      <div className={`bg-white p-8 rounded-xl shadow-md border-t-4 mt-8 transition-colors ${modoEdicao ? 'border-blue-500' : 'border-vcl-gold'}`}>
+        <div className="flex justify-between items-center mb-6 border-b pb-4">
+          <h2 className="text-2xl font-bold text-vcl-black">
+            {modoEdicao ? 'Editar Comunicado' : 'Novo Comunicado'}
+          </h2>
+          {modoEdicao && (
+            <button onClick={cancelarEdicao} className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-red-500 transition">
+              <X size={18} /> Cancelar Edição
+            </button>
+          )}
+        </div>
+        
+        <form onSubmit={handleGuardar} className="space-y-6">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Título do Comunicado</label>
+            <input 
+              required 
+              type="text" 
+              value={titulo} 
+              onChange={(e) => setTitulo(e.target.value)} 
+              className="w-full p-3 border border-gray-300 rounded focus:border-vcl-red outline-none" 
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Link da Fotografia (Opcional)</label>
+            <input 
+              type="text" 
+              value={imagemUrl} 
+              onChange={(e) => setImagemUrl(e.target.value)} 
+              className="w-full p-3 border border-gray-300 rounded focus:border-vcl-red outline-none" 
+              placeholder="Cola aqui o link do Cloudinary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Conteúdo do Comunicado</label>
+            <div className="bg-white">
+              <ReactQuill 
+                theme="snow" 
+                value={conteudo} 
+                onChange={setConteudo} 
+                modules={modulos}
+                className="h-64 mb-12" 
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className={`w-full text-white px-6 py-4 rounded-lg font-bold uppercase transition flex items-center justify-center gap-2 ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : (modoEdicao ? 'bg-blue-600 hover:bg-blue-700' : 'bg-vcl-black hover:bg-vcl-red')}`}
+          >
+            {isSubmitting ? <><Loader size={20} className="animate-spin"/> A gravar...</> : (modoEdicao ? 'Atualizar Comunicado' : 'Publicar Comunicado')}
+          </button>
+        </form>
+      </div>
+
+      {/* --- TABELA DE GESTÃO DE COMUNICADOS --- */}
+      <div className="bg-white p-8 rounded-xl shadow-md border-t-4 border-gray-300 mt-8">
+        <h2 className="text-xl font-bold text-vcl-black mb-6">Comunicados Publicados</h2>
+        
+        {comunicados.length === 0 ? (
+          <p className="text-gray-500 text-center py-6">Ainda não existem comunicados publicados.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50 text-gray-600 text-sm uppercase">
+                  <th className="p-4 rounded-tl-lg">Data</th>
+                  <th className="p-4">Título</th>
+                  <th className="p-4 text-right rounded-tr-lg">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comunicados.map((com) => (
+                  <tr key={com.id} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td className="p-4 text-sm text-gray-500 flex items-center gap-2">
+                      <Calendar size={14}/> {com.data}
+                    </td>
+                    <td className="p-4 font-bold text-vcl-black">
+                      {com.titulo}
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex justify-end gap-3">
+                        <button 
+                          onClick={() => handleEditar(com)}
+                          className="p-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition"
+                          title="Editar"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleApagar(com.id)}
+                          className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200 transition"
+                          title="Apagar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// --- COMPONENTE PRINCIPAL ADMIN ---
 const Admin = () => {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,9 +274,9 @@ const Admin = () => {
   const SENHA_SECRETA = import.meta.env.VITE_ADMIN_PASSWORD;
   const LINK_EDICAO_SHEETS = import.meta.env.VITE_GOOGLE_SHEETS_EDICAO;
 
-  // DADOS DO CLOUDINARY (PREENCHE ISTO COM OS TEUS DADOS DO PASSO 1)
-  const CLOUDINARY_CLOUD_NAME = "dksousivl"; // Ex: 'dpkreativ'
-  const CLOUDINARY_UPLOAD_PRESET = "vcl_uploads"; // Ex: 'vcl_uploads'
+  // DADOS DO CLOUDINARY
+  const CLOUDINARY_CLOUD_NAME = "dksousivl"; 
+  const CLOUDINARY_UPLOAD_PRESET = "vcl_uploads"; 
 
   // --- ESTADOS DO UPLOAD DE IMAGEM ---
   const [imageSelected, setImageSelected] = useState(null);
@@ -41,7 +305,7 @@ const Admin = () => {
       const data = await response.json();
       if (data.secure_url) {
         setUploadedUrl(data.secure_url);
-        setImageSelected(null); // Limpa a seleção
+        setImageSelected(null); 
       } else {
         alert("Erro no upload. Verifica as configurações do Cloudinary.");
       }
@@ -55,7 +319,7 @@ const Admin = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(uploadedUrl);
-    alert("Link copiado! Agora cola na coluna 'foto_url' do Google Sheets.");
+    alert("Link copiado! Agora podes colar na caixa abaixo ou no Excel.");
   };
 
   if (!isLoggedIn) {
@@ -115,13 +379,10 @@ const Admin = () => {
                 <div className="flex items-center gap-2 text-green-700 font-bold mb-2">
                   <CheckCircle size={20} /> Foto carregada com sucesso!
                 </div>
-                <p className="text-xs text-gray-500 mb-2">Copia este link e cola no Excel:</p>
+                <p className="text-xs text-gray-500 mb-2">Copia este link e usa onde precisares:</p>
                 <div className="flex gap-2">
                   <input type="text" value={uploadedUrl} readOnly className="w-full p-2 text-xs bg-white border rounded text-gray-600 overflow-hidden" />
                   <button onClick={copyToClipboard} className="bg-gray-200 hover:bg-gray-300 p-2 rounded" title="Copiar"><Copy size={18}/></button>
-                </div>
-                <div className="mt-4 flex justify-center">
-                  <img src={uploadedUrl} alt="Preview" className="h-24 w-24 object-cover rounded-full border-2 border-vcl-gold shadow-md" />
                 </div>
               </div>
             )}
@@ -131,18 +392,19 @@ const Admin = () => {
           <div className="bg-white p-8 rounded-xl shadow-md border-t-4 border-vcl-black">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-4 bg-green-100 text-green-700 rounded-lg"><FileSpreadsheet size={32} /></div>
-              <div><h3 className="text-xl font-bold text-vcl-black">2. Base de Dados (Excel)</h3><p className="text-sm text-gray-500">Cola o link da foto na coluna 'foto_url'.</p></div>
+              <div><h3 className="text-xl font-bold text-vcl-black">2. Base de Dados (Excel)</h3><p className="text-sm text-gray-500">Apenas para futebol e modalidades.</p></div>
             </div>
-            <p className="text-gray-600 mb-6">Abre o Google Sheets para editar jogadores, resultados e colar os links das fotos novas.</p>
+            <p className="text-gray-600 mb-6">Abre o Google Sheets para editar jogadores, resultados e tabelas de classificação.</p>
             <a href={LINK_EDICAO_SHEETS} target="_blank" rel="noopener noreferrer" className="block w-full text-center bg-vcl-black text-white py-3 rounded font-bold hover:bg-gray-800 transition flex items-center justify-center gap-2">
               Abrir Google Sheets <ExternalLink size={18}/>
             </a>
-            <div className="mt-6 p-4 bg-yellow-50 text-yellow-800 text-xs rounded border border-yellow-200">
-              <strong>Dica:</strong> Depois de colares o link no Excel, aguarda 1 minuto e atualiza o site para ver a nova foto.
-            </div>
           </div>
 
         </div>
+
+        {/* COMUNICADOS */}
+        <SecaoAdminComunicados />
+
       </div>
     </div>
   );

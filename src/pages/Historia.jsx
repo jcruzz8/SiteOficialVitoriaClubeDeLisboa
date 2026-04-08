@@ -1,108 +1,47 @@
 import React from 'react';
-import { Star, Award, Scroll } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { HardHat, Clock, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Historia = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-[70vh] bg-gray-50 flex flex-col items-center justify-center p-4">
       <Helmet>
-        <title>Vitória Clube de Lisboa - A Nossa História</title>
-        <meta name="description" content="Conheça a história do Vitória Clube de Lisboa, fundado em 1944. Tradição, orgulho e formação desportiva desde sempre." />
+        <title>História | Vitória Clube de Lisboa</title>
+        <meta name="description" content="A página da história do Vitória Clube de Lisboa encontra-se em construção." />
       </Helmet>
-      
-      {/* HERO SIMPLES */}
-      <div className="bg-vcl-black text-vcl-gold py-20 px-4 text-center">
-        <Star size={48} className="mx-auto mb-4 animate-pulse" />
-        <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-widest uppercase">Nossa História</h1>
-        <p className="text-white mt-4 font-sans tracking-wide">Orgulho, Tradição e Glória desde 19XX</p>
-      </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <div className="text-center max-w-lg mx-auto mt-10 mb-20 animate-fade-in">
         
-        {/* INTRODUÇÃO */}
-        <div className="text-center mb-16">
-          <p className="text-xl text-gray-700 leading-relaxed">
-            O <strong>Vitória Clube de Lisboa</strong> nasceu do sonho de um grupo de amigos que queriam criar mais do que um clube de futebol: queriam criar uma família. Localizado no coração de Lisboa, o clube tornou-se um símbolo de resistência e formação desportiva.
-          </p>
-        </div>
-
-        {/* TIMELINE */}
-        <div className="relative border-l-4 border-vcl-red ml-4 md:ml-0 space-y-12">
-          
-          {/* Evento 1 */}
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-3 top-0 bg-vcl-black border-4 border-vcl-red w-6 h-6 rounded-full"></div>
-            <span className="text-vcl-red font-bold text-xl block mb-2">19XX - A Fundação</span>
-            <h3 className="text-2xl font-bold text-vcl-black mb-2">O Início de Tudo</h3>
-            <p className="text-gray-600">
-              O clube é fundado oficialmente na sede antiga. As cores vermelho, preto e branco são escolhidas para representar o sangue (paixão), a terra (firmeza) e a paz (desportivismo).
-            </p>
-          </div>
-
-          {/* Evento 2 */}
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-3 top-0 bg-vcl-black border-4 border-vcl-red w-6 h-6 rounded-full"></div>
-            <span className="text-vcl-red font-bold text-xl block mb-2">1985 - A Primeira Glória</span>
-            <h3 className="text-2xl font-bold text-vcl-black mb-2">Campeões Distritais</h3>
-            <p className="text-gray-600">
-              Uma equipa lendária conquista o primeiro troféu oficial do clube, subindo de divisão num jogo memorável decidido nos últimos minutos.
-            </p>
-          </div>
-
-          {/* Evento 3 */}
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-3 top-0 bg-vcl-black border-4 border-vcl-red w-6 h-6 rounded-full"></div>
-            <span className="text-vcl-red font-bold text-xl block mb-2">2010 - Expansão</span>
-            <h3 className="text-2xl font-bold text-vcl-black mb-2">Novas Modalidades</h3>
-            <p className="text-gray-600">
-              O clube inaugura o novo pavilhão e abre as secções de Boxe e Muay Thai, trazendo novos atletas e sócios para a família vitoriana.
-            </p>
-          </div>
-
-          {/* Evento 4 */}
-          <div className="relative pl-8 md:pl-12">
-            <div className="absolute -left-3 top-0 bg-vcl-black border-4 border-vcl-red w-6 h-6 rounded-full"></div>
-            <span className="text-vcl-red font-bold text-xl block mb-2">Hoje</span>
-            <h3 className="text-2xl font-bold text-vcl-black mb-2">O Futuro</h3>
-            <p className="text-gray-600">
-              Com centenas de atletas na formação, o Vitória Clube de Lisboa continua a crescer, mantendo-se fiel ao seu lema: "A União Faz a Força".
-            </p>
+        {/* Ícone Animado/Decorativo */}
+        <div className="bg-red-50 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-red-100 relative shadow-inner">
+          <HardHat size={56} className="text-vcl-red" />
+          <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg border border-gray-100 animate-bounce">
+            <Clock size={28} className="text-vcl-gold" />
           </div>
         </div>
-
+        
+        {/* Texto */}
+        <h1 className="text-4xl md:text-5xl font-black text-vcl-black uppercase mb-6 tracking-tight">
+          Em Construção
+        </h1>
+        
+        <div className="w-16 h-1 bg-gradient-to-r from-vcl-red to-vcl-gold mx-auto rounded-full mb-6"></div>
+        
+        <p className="text-gray-500 text-lg mb-10 leading-relaxed">
+          Estamos a recolher os arquivos e a redigir a história oficial do Vitória Clube de Lisboa. 
+          <br className="hidden md:block" /> Esta página estará disponível muito em breve!
+        </p>
+        
+        {/* Botão de Voltar */}
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-3 bg-vcl-black text-white px-8 py-4 rounded-xl font-bold uppercase hover:bg-vcl-red transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1"
+        >
+          <ArrowLeft size={20} /> Voltar ao Início
+        </Link>
+        
       </div>
-
-      {/* PALMARÉS */}
-      <div className="bg-gray-100 py-16 text-center">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-vcl-black mb-10 flex justify-center items-center gap-3">
-            <Award className="text-vcl-gold" size={40} /> Sala de Troféus
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded shadow-sm">
-              <Scroll className="mx-auto text-gray-400 mb-2" />
-              <div className="font-bold text-2xl text-vcl-black">3x</div>
-              <div className="text-sm text-gray-500 uppercase">Campeão Distrital</div>
-            </div>
-            <div className="bg-white p-6 rounded shadow-sm">
-              <Scroll className="mx-auto text-gray-400 mb-2" />
-              <div className="font-bold text-2xl text-vcl-black">5x</div>
-              <div className="text-sm text-gray-500 uppercase">Taça de Honra</div>
-            </div>
-             <div className="bg-white p-6 rounded shadow-sm">
-              <Scroll className="mx-auto text-gray-400 mb-2" />
-              <div className="font-bold text-2xl text-vcl-black">2x</div>
-              <div className="text-sm text-gray-500 uppercase">Campeão Boxe Regional</div>
-            </div>
-             <div className="bg-white p-6 rounded shadow-sm">
-              <Scroll className="mx-auto text-gray-400 mb-2" />
-              <div className="font-bold text-2xl text-vcl-black">12+</div>
-              <div className="text-sm text-gray-500 uppercase">Torneios Formação</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 };

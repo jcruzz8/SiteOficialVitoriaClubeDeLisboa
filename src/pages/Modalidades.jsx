@@ -38,7 +38,7 @@ const Modalidades = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>Vitória Clube de Lisboa - Modalidades</title>
+        <title>Modalidades | Vitória Clube de Lisboa</title>
         <meta name="description" content="Descubra as modalidades do Vitória Clube de Lisboa: Boxe e Muay Thai. Treine com treinadores certificados e forme-se como atleta." />
       </Helmet>
       

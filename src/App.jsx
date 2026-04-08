@@ -10,6 +10,8 @@ import Loja from './pages/Loja';     // <--- NOVO
 import Socio from './pages/Socio';   // <--- NOVO
 import Admin from './pages/Admin';
 import Footer from './components/Footer';
+import Comunicados from './pages/Comunicados'; // <--- NOVO
+import ScrollToTop from './ScrollToTop';
 
 function App() {
   return (
@@ -17,12 +19,14 @@ function App() {
       <Router>
         <div className="bg-gray-50 min-h-screen font-sans text-vcl-black">
           {/* Navbar Fixa no topo */}
+          <ScrollToTop />
           <Navbar />
 
           {/* Conteúdo das Páginas */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/futebol" element={<Futebol />} />
+            <Route path="/comunicados" element={<Comunicados />} /> {/* <--- NOVO */}
             <Route path="/modalidades" element={<Modalidades />} />
             <Route path="/historia" element={<Historia />} />
             <Route path="/loja" element={<Loja />} />

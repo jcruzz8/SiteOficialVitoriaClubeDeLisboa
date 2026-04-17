@@ -43,7 +43,7 @@ const Comunicados = () => {
             </Helmet>
 
             {/* HEADER */}
-            <div className="bg-[#7f1d1d] text-white py-16 px-4 text-center border-b-4 border-vcl-gold">
+            <div className="bg-vcl-black text-white py-16 px-4 text-center border-b-4 border-vcl-red">
                 <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight uppercase">Comunicados</h1>
                 <p className="text-white/80 text-lg">As últimas notícias e novidades do nosso clube.</p>
             </div>

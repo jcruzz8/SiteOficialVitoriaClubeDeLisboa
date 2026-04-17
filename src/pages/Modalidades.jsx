@@ -42,8 +42,8 @@ const Modalidades = () => {
         <meta name="description" content="Descubra as modalidades do Vitória Clube de Lisboa: Boxe e Muay Thai. Treine com treinadores certificados e forme-se como atleta." />
       </Helmet>
       
-      {/* HEADER (matching 'Torne-se Sócio' background) */}
-      <div className="bg-[#7f1d1d] text-white py-20 px-4 text-center border-b-4 border-vcl-gold">
+      {/* HEADER (matching 'Futebol' background) */}
+      <div className="bg-vcl-black text-white py-20 px-4 text-center border-b-4 border-vcl-red">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-5xl font-bold uppercase tracking-wide mb-4">Modalidades</h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">

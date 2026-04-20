@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, FileSpreadsheet, ExternalLink, ShieldCheck, ImagePlus, Loader, CheckCircle, Copy, Pencil, Trash2, X, AlertCircle, Calendar } from 'lucide-react';
+import { Lock, FileSpreadsheet, ExternalLink, ShieldCheck, ImagePlus, Loader, CheckCircle, Copy, Pencil, Trash2, X, AlertCircle, Calendar, LogOut } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { supabase } from '../supabase'; // A nossa ligação mágica à base de dados
+import { useNavigate } from 'react-router-dom';
 
 // --- COMPONENTE DOS COMUNICADOS ---
 const SecaoAdminComunicados = () => {
@@ -266,12 +267,16 @@ const SecaoAdminComunicados = () => {
 
 // --- COMPONENTE PRINCIPAL ADMIN ---
 const Admin = () => {
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  // --- ESTADOS DE AUTENTICAÇÃO (SUPABASE) ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [erroLogin, setErroLogin] = useState('');
 
   // --- CONFIGURAÇÃO ---
-  const SENHA_SECRETA = import.meta.env.VITE_ADMIN_PASSWORD;
   const LINK_EDICAO_SHEETS = import.meta.env.VITE_GOOGLE_SHEETS_EDICAO;
 
   // DADOS DO CLOUDINARY
@@ -283,12 +288,50 @@ const Admin = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (password === SENHA_SECRETA) setAdminView(); else setError('Senha incorreta.');
-  };
-  const setAdminView = () => { setIsLoggedIn(true); setError(''); };
+  // 1. VERIFICA SE O UTILIZADOR JÁ FEZ LOGIN ANTES (Guarda a sessão)
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsLoggedIn(true);
+      }
+    };
+    checkSession();
+  }, []);
 
+  // 2. FUNÇÃO DE LOGIN COM A SUPABASE
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErroLogin('');
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) throw error;
+      
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Erro de login:", error.message);
+      setErroLogin('Email ou Senha incorretos.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 3. FUNÇÃO DE LOGOUT
+  const handleLogout = async () => {
+    navigate('/');
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setEmail('');
+    setPassword('');
+  };
+
+  // 4. FUNÇÃO DO CLOUDINARY
   const uploadImage = async () => {
     if (!imageSelected) return alert("Selecione uma imagem primeiro!");
     
@@ -322,6 +365,7 @@ const Admin = () => {
     alert("Link copiado! Agora podes colar na caixa abaixo ou no Excel.");
   };
 
+  // --- ECRÃ DE LOGIN (SEGURO COM SUPABASE) ---
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-vcl-black flex items-center justify-center px-4">
@@ -331,23 +375,59 @@ const Admin = () => {
           </div>
           <h1 className="text-2xl font-bold text-vcl-black mb-2">Área de Admin</h1>
           <p className="text-gray-500 mb-6">Acesso restrito à direção do clube.</p>
+          
           <form onSubmit={handleLogin} className="space-y-4">
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Inserir Senha" className="w-full p-3 border border-gray-300 rounded focus:border-vcl-red focus:outline-none"/>
-            {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
-            <button type="submit" className="w-full bg-vcl-red text-white py-3 rounded font-bold uppercase hover:bg-red-700 transition">Entrar</button>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="Email de Administrador" 
+              className="w-full p-3 border border-gray-300 rounded focus:border-vcl-red focus:outline-none"
+              required
+            />
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              placeholder="Palavra-Passe" 
+              className="w-full p-3 border border-gray-300 rounded focus:border-vcl-red focus:outline-none"
+              required
+            />
+            
+            {erroLogin && <p className="text-red-500 text-sm font-bold">{erroLogin}</p>}
+            
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-vcl-red text-white py-3 rounded font-bold uppercase hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:bg-gray-400"
+            >
+              {loading ? <><Loader size={18} className="animate-spin"/> A verificar...</> : 'Entrar'}
+            </button>
           </form>
         </div>
       </div>
     );
   }
 
+  // --- ECRÃ DO PAINEL DE ADMINISTRAÇÃO ---
   return (
     <div className="min-h-screen bg-gray-50 py-20 px-4">
       <div className="max-w-6xl mx-auto">
         
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border-l-8 border-vcl-red flex justify-between items-center">
-          <div><h1 className="text-3xl font-bold text-vcl-black mb-2">Painel de Controlo</h1><p className="text-gray-500">Bem-vindo, Administrador.</p></div>
-          <ShieldCheck size={48} className="text-green-500" />
+        {/* CABEÇALHO DO PAINEL */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border-l-8 border-vcl-red flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="text-center sm:text-left">
+            <h1 className="text-3xl font-bold text-vcl-black mb-2 flex items-center justify-center sm:justify-start gap-3">
+              Painel de Controlo <ShieldCheck size={32} className="text-green-500" />
+            </h1>
+            <p className="text-gray-500">Bem-vindo, Administrador.</p>
+          </div>
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 px-4 py-2 rounded-lg font-bold transition"
+          >
+            <LogOut size={18} /> Sair
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">

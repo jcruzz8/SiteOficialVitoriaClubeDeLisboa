@@ -133,14 +133,14 @@ const Socio = () => {
       </Helmet>
       
       {/* 1. HERO HEADER */}
-      <div className="bg-[#7f1d1d] text-white py-20 px-4 text-center border-b-4 border-vcl-gold">
+      <div className="bg-vcl-black text-white py-20 px-4 text-center border-b-4 border-vcl-red">
         <div className="max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-black/20 border border-white/10 px-4 py-1 rounded-full mb-6 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-1 rounded-full mb-6 backdrop-blur-sm">
             <Heart size={16} className="text-white fill-white animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-100">Paixão Eterna</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-white">Paixão Eterna</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-md">
-            FAZ-TE <span className="text-black">SÓCIO</span>
+          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-md uppercase">
+            FAZ-TE <span className="text-vcl-red">SÓCIO</span>
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto font-light leading-relaxed">
             A tua quota mantém o clube vivo. Junta-te à família vitoriana e contribui para o futuro dos nossos atletas.

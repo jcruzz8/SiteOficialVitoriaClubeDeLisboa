@@ -147,7 +147,7 @@ const Loja = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-gray-100">Loja Oficial</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-tight drop-shadow-md">
-            VESTE A NOSSA <span className="text-vcl-red">ALMA</span>
+            VESTE A NOSSA <span className="text-vcl-red">PELE</span>
           </h1>
           <p className="text-white/90 text-lg max-w-2xl mx-auto font-light">
             Equipamentos oficiais e acessórios. Mostra as tuas cores onde quer que vás.

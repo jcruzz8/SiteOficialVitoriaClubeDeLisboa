@@ -87,7 +87,7 @@ const Comunicados = () => {
 
                             {/* MAGIA AQUI: Interpreta o HTML gerado pelo React Quill */}
                             <div
-                                className="prose prose-red max-w-none text-gray-700"
+                                className="prose prose-lg prose-red max-w-none text-justify break-words"
                                 dangerouslySetInnerHTML={{ __html: comunicadoAberto.conteudo }}
                             />
                         </div>

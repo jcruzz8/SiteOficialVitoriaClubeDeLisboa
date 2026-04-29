@@ -155,7 +155,7 @@ const Home = () => {
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black text-white mb-6 leading-tight tracking-tight">
-            ENTRA NA <span className="text-transparent bg-clip-text bg-gradient-to-r from-vcl-red to-red-600">REDE</span>
+            A UNIÃO <span className="text-transparent bg-clip-text bg-gradient-to-r from-vcl-red to-red-600"> FAZ A FORÇA</span>
           </h1>
 
           <p className="text-gray-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light">

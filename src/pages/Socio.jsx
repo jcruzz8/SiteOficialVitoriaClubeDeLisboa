@@ -41,6 +41,7 @@ const Socio = () => {
   const planosOriginais = [
     { categoria: "Pessoa Colectiva", mensal: "3.00€", anual: "39,00€", obs: "Empresas e Associações.", destaque: false },
     { categoria: "Homens Efetivos", mensal: "1.50€", anual: "19,50€", obs: "Adultos do sexo masculino.", destaque: true },
+    { categoria: "Mulheres Efetivas", mensal: "0.75€", anual: "9,75€", obs: "Adultos do sexo feminino." },
     { categoria: "Homens Reformados", mensal: "0.75€", anual: "9,75€", obs: "Jovens de espírito." },
     { categoria: "Homens Menores", mensal: "0.50€", anual: "6,50€", obs: "Dos 10 aos 18 anos." },
     { categoria: "Mulheres Reformadas", mensal: "0.50€", anual: "6,50€", obs: "Senhoras reformadas." },

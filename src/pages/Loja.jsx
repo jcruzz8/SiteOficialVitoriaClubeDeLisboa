@@ -381,12 +381,17 @@ const ProductCard = ({ product, onAdd }) => {
       <div className="p-6 flex-1 flex flex-col">
         <h3 className="font-bold text-lg text-vcl-black mb-2 leading-tight flex-1">{product.name}</h3>
         
-        <div className="mt-4 flex items-center gap-3">
+        <p className="text-sm font-semibold text-red-600 mb-3">
+          Stock indisponível, novidades muito brevemente...
+        </p>
+
+        <div className="mt-2 flex items-center gap-3 opacity-70">
           {product.type === 'wear' ? (
             <select 
               value={size} 
               onChange={(e) => setSize(e.target.value)}
-              className="bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-vcl-red focus:border-vcl-red block p-2.5 font-bold outline-none cursor-pointer"
+              disabled
+              className="bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-vcl-red focus:border-vcl-red block p-2.5 font-bold outline-none cursor-not-allowed"
             >
               <option value="XS">XS</option>
               <option value="S">S</option>
@@ -400,10 +405,10 @@ const ProductCard = ({ product, onAdd }) => {
           )}
 
           <button 
-            onClick={() => onAdd(product, product.type === 'wear' ? size : 'Único')}
-            className="flex-1 bg-vcl-black text-white hover:bg-vcl-red focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2 transition duration-300"
+            disabled
+            className="flex-1 bg-gray-300 text-gray-600 cursor-not-allowed font-bold rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2 transition duration-300"
           >
-            <Plus size={16}/> Adicionar
+            <AlertCircle size={16}/> Indisponível
           </button>
         </div>
       </div>

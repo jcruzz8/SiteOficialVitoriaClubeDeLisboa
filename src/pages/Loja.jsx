@@ -21,22 +21,22 @@ const Loja = () => {
   // --- DADOS DOS PRODUTOS (Atualizado com a nova lista) ---
   const products = [
     // Escalão de Preços: 20€
-    { id: 1, name: 'Camisola Principal (Vermelha)', price: 20, image: camisolaVermelha, type: 'wear' },
-    { id: 2, name: 'Camisola Alternativa (Branca)', price: 20, image: camisolaBranca, type: 'wear' },
-    { id: 3, name: 'Camisola Alternativa (Preta)', price: 20, image: camisolaPreta, type: 'wear' },
-    { id: 4, name: 'Camisola Guarda-Redes', price: 20, image: camisolaGR, type: 'wear' },
+    { id: 1, name: 'Camisola Principal (Vermelha)', price: 20, image: camisolaVermelha, type: 'wear', available: false },
+    { id: 2, name: 'Camisola Alternativa (Branca)', price: 20, image: camisolaBranca, type: 'wear', available: false },
+    { id: 3, name: 'Camisola Alternativa (Preta)', price: 20, image: camisolaPreta, type: 'wear', available: false },
+    { id: 4, name: 'Camisola Guarda-Redes', price: 20, image: camisolaGR, type: 'wear', available: false },
     
     // Kits e Conjuntos
-    { id: 5, name: 'Kit de Jogo Completo', price: 35, image: kitJogo, type: 'wear' },
-    { id: 6, name: 'Kit de Guarda-Redes', price: 35, image: kitGR, type: 'wear' },
-    { id: 7, name: 'Kit de Treino', price: 25, image: kitTreino, type: 'wear' },
-    { id: 8, name: 'Fato de Treino', price: 40, image: fatoTreino, type: 'wear' },
-    { id: 9, name: 'Impermeável', price: 25, image: impermeavel, type: 'wear' },
+    { id: 5, name: 'Kit de Jogo Completo', price: 35, image: kitJogo, type: 'wear', available: false },
+    { id: 6, name: 'Kit de Guarda-Redes', price: 35, image: kitGR, type: 'wear', available: false },
+    { id: 7, name: 'Kit de Treino', price: 25, image: kitTreino, type: 'wear', available: false },
+    { id: 8, name: 'Fato de Treino', price: 40, image: fatoTreino, type: 'wear', available: false },
+    { id: 9, name: 'Impermeável', price: 25, image: impermeavel, type: 'wear', available: false },
 
     // Acessórios
-    { id: 10, name: 'Cachecol VCL Tradicional', price: 10, image: cachecolVCL, type: 'acc' },
-    { id: 11, name: 'Cachecol Sublimado', price: 7.50, image: cachecolSub, type: 'acc' },
-    { id: 12, name: 'Mala de Viagem', price: 30, image: malaViagem, type: 'acc' },
+    { id: 10, name: 'Cachecol VCL Tradicional', price: 10, image: cachecolVCL, type: 'acc', available: true },
+    { id: 11, name: 'Cachecol Sublimado', price: 7.50, image: cachecolSub, type: 'acc', available: true },
+    { id: 12, name: 'Mala de Viagem', price: 30, image: malaViagem, type: 'acc', available: false },
   ];
 
   // --- ESTADOS ---
@@ -380,18 +380,24 @@ const ProductCard = ({ product, onAdd }) => {
       
       <div className="p-6 flex-1 flex flex-col">
         <h3 className="font-bold text-lg text-vcl-black mb-2 leading-tight flex-1">{product.name}</h3>
-        
-        <p className="text-sm font-semibold text-red-600 mb-3">
-          Stock indisponível, novidades muito brevemente...
-        </p>
 
-        <div className="mt-2 flex items-center gap-3 opacity-70">
+        {!product.available ? (
+          <p className="text-sm font-semibold text-red-600 mb-3">
+            Stock indisponível, novidades muito brevemente...
+          </p>
+        ) : (
+          <p className="text-sm font-semibold text-vcl-black mb-3">
+            Disponível agora. Encomenda já.
+          </p>
+        )}
+
+        <div className={`mt-2 flex items-center gap-3 ${product.available ? '' : 'opacity-70'}`}>
           {product.type === 'wear' ? (
             <select 
               value={size} 
               onChange={(e) => setSize(e.target.value)}
-              disabled
-              className="bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-vcl-red focus:border-vcl-red block p-2.5 font-bold outline-none cursor-not-allowed"
+              disabled={!product.available}
+              className={`bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-vcl-red focus:border-vcl-red block p-2.5 font-bold outline-none ${product.available ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             >
               <option value="XS">XS</option>
               <option value="S">S</option>
@@ -405,10 +411,15 @@ const ProductCard = ({ product, onAdd }) => {
           )}
 
           <button 
-            disabled
-            className="flex-1 bg-gray-300 text-gray-600 cursor-not-allowed font-bold rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2 transition duration-300"
+            onClick={() => product.available && onAdd(product, product.type === 'wear' ? size : 'Único')}
+            disabled={!product.available}
+            className={`flex-1 font-bold rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2 transition duration-300 ${product.available ? 'bg-vcl-black text-white hover:bg-vcl-red' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
           >
-            <AlertCircle size={16}/> Indisponível
+            {product.available ? (
+              <><Plus size={16}/> Adicionar</>
+            ) : (
+              <><AlertCircle size={16}/> Indisponível</>
+            )}
           </button>
         </div>
       </div>

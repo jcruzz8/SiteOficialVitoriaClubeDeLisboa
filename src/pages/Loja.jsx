@@ -6,37 +6,41 @@ import { Helmet } from 'react-helmet-async';
 // Certifica-te que os nomes dos ficheiros na pasta assets correspondem a estes imports
 import camisolaVermelha from '../assets/CamisolaVermelha.png';
 import camisolaBranca from '../assets/CamisolaBranca.png';
-import camisolaPreta from '../assets/CamisolaPreta.png';
 import camisolaGR from '../assets/CamisolaGR.png';
 import kitJogo from '../assets/KitJogo.png';
 import kitGR from '../assets/KitGR.png';
 import kitTreino from '../assets/KitTreino.png';
 import fatoTreino from '../assets/FatoTreino.png';
-import impermeavel from '../assets/IMPERMEAVEL.png';
 import cachecolVCL from '../assets/Cachecol_VCL.png';
 import cachecolSub from '../assets/CachecolSublimado.png';
-import malaViagem from '../assets/MalaViagem.png';
+import camisolaBrevemente from '../assets/camisolaBrevemente.png';
 
 const Loja = () => {
   // --- DADOS DOS PRODUTOS (Atualizado com a nova lista) ---
+  // ---------------------------------------------------------------------------
+  // LISTA DE PRODUTOS
+  // ---------------------------------------------------------------------------
+  // Esta secção centraliza todos os artigos da loja. Quando houver novidades,
+  // basta adicionar mais objetos ao array para os mostrar automaticamente.
+  // Neste momento, mantemos a página em destaque com a imagem de anúncio oficial
+  // da nova coleção, que será substituída assim que os produtos estiverem prontos.
   const products = [
     // Escalão de Preços: 20€
     { id: 1, name: 'Camisola Principal (Vermelha)', price: 20, image: camisolaVermelha, type: 'wear', available: false },
     { id: 2, name: 'Camisola Alternativa (Branca)', price: 20, image: camisolaBranca, type: 'wear', available: false },
-    { id: 3, name: 'Camisola Alternativa (Preta)', price: 20, image: camisolaPreta, type: 'wear', available: false },
-    { id: 4, name: 'Camisola Guarda-Redes', price: 20, image: camisolaGR, type: 'wear', available: false },
+    { id: 3, name: 'Camisola Guarda-Redes', price: 20, image: camisolaGR, type: 'wear', available: false },
     
     // Kits e Conjuntos
-    { id: 5, name: 'Kit de Jogo Completo', price: 35, image: kitJogo, type: 'wear', available: false },
-    { id: 6, name: 'Kit de Guarda-Redes', price: 35, image: kitGR, type: 'wear', available: false },
-    { id: 7, name: 'Kit de Treino', price: 25, image: kitTreino, type: 'wear', available: false },
-    { id: 8, name: 'Fato de Treino', price: 40, image: fatoTreino, type: 'wear', available: false },
-    { id: 9, name: 'Impermeável', price: 25, image: impermeavel, type: 'wear', available: false },
+    { id: 4, name: 'Kit de Jogo Completo', price: 35, image: kitJogo, type: 'wear', available: false },
+    { id: 5, name: 'Kit de Guarda-Redes', price: 35, image: kitGR, type: 'wear', available: false },
+    { id: 6, name: 'Kit de Treino', price: 25, image: kitTreino, type: 'wear', available: false },
+    { id: 7, name: 'Fato de Treino', price: 40, image: fatoTreino, type: 'wear', available: false },
 
     // Acessórios
-    { id: 10, name: 'Cachecol VCL Tradicional', price: 10, image: cachecolVCL, type: 'acc', available: true },
-    { id: 11, name: 'Cachecol Sublimado', price: 7.50, image: cachecolSub, type: 'acc', available: true },
-    { id: 12, name: 'Mala de Viagem', price: 30, image: malaViagem, type: 'acc', available: false },
+    { id: 8, name: 'Cachecol VCL Tradicional', price: 10, image: cachecolVCL, type: 'acc', available: true },
+    { id: 9, name: 'Cachecol Sublimado', price: 7.50, image: cachecolSub, type: 'acc', available: true },
+    // Destaque "em breve": imagem de anúncio oficial para novos artigos.
+    { id: 10, name: 'Novos produtos por anunciar', price: 0, image: camisolaBrevemente, type: 'wear', available: false },
   ];
 
   // --- ESTADOS ---
@@ -156,9 +160,14 @@ const Loja = () => {
       </div>
 
       {/* 2. GRELHA DE PRODUTOS */}
+      {/*
+        Esta área está preparada para receber o catálogo real dos produtos.
+        Por agora, mostramos o artwork de novidade em destaque para manter a página
+        visualmente forte e alinhada com a comunicação do clube.
+      */}
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
+        <div className="grid grid-cols-1 gap-8">
+          {products.filter((product) => product.name === 'Novos produtos por anunciar').map((product) => (
             <ProductCard key={product.id} product={product} onAdd={addToCart} />
           ))}
         </div>
@@ -361,66 +370,64 @@ const Loja = () => {
   );
 };
 
-// --- COMPONENTE DO CARTÃO DE PRODUTO ---
+// ---------------------------------------------------------------------------
+// COMPONENTE DO CARTÃO DE PRODUTO
+// ---------------------------------------------------------------------------
+// Este componente foi mantido para preservar a estrutura da loja e permitir
+// a futura evolução para produtos reais. No momento atual, usamos uma versão
+// de destaque com a imagem promocional e sem ações de compra.
 const ProductCard = ({ product, onAdd }) => {
-  const [size, setSize] = useState('M'); // Tamanho default
+  const [size, setSize] = useState('M'); // Tamanho padrão para produtos de vestuário.
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:-translate-y-1 transition duration-300 border border-gray-100 flex flex-col">
-      <div className="relative h-64 bg-gray-100 overflow-hidden flex items-center justify-center p-4">
-        {product.image ? (
-          <img src={product.image} alt={product.name} className="h-full w-auto object-contain group-hover:scale-110 transition duration-500" />
-        ) : (
-          <div className="text-gray-300 font-bold text-4xl">FOTO</div>
-        )}
-        <div className="absolute top-3 right-3 bg-vcl-black text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-          {product.price.toFixed(2)}€
-        </div>
-      </div>
-      
-      <div className="p-6 flex-1 flex flex-col">
-        <h3 className="font-bold text-lg text-vcl-black mb-2 leading-tight flex-1">{product.name}</h3>
-
-        {!product.available ? (
-          <p className="text-sm font-semibold text-red-600 mb-3">
-            Stock indisponível, novidades muito brevemente...
-          </p>
-        ) : (
-          <p className="text-sm font-semibold text-vcl-black mb-3">
-            Disponível agora. Encomenda já.
-          </p>
-        )}
-
-        <div className={`mt-2 flex items-center gap-3 ${product.available ? '' : 'opacity-70'}`}>
-          {product.type === 'wear' ? (
-            <select 
-              value={size} 
-              onChange={(e) => setSize(e.target.value)}
-              disabled={!product.available}
-              className={`bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-vcl-red focus:border-vcl-red block p-2.5 font-bold outline-none ${product.available ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-            >
-              <option value="XS">XS</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-            </select>
-          ) : (
-            <div className="text-sm text-gray-400 font-bold px-2">Tamanho Único</div>
-          )}
-
-          <button 
-            onClick={() => product.available && onAdd(product, product.type === 'wear' ? size : 'Único')}
-            disabled={!product.available}
-            className={`flex-1 font-bold rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2 transition duration-300 ${product.available ? 'bg-vcl-black text-white hover:bg-vcl-red' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
+    <div className="bg-white rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.12)] overflow-hidden group border border-gray-100 relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-vcl-red/5 via-transparent to-transparent" />
+      <div className="relative p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+        <div className="relative flex-1 flex items-center justify-center min-h-[420px] w-full lg:w-auto">
+          <div className="absolute inset-x-10 top-8 h-32 bg-vcl-red/10 blur-3xl rounded-full" />
+          <div
+            className="relative w-full max-w-[420px] transition-all duration-700 ease-out group-hover:scale-[1.03]"
+            style={{
+              transform: 'perspective(1200px) rotateX(10deg) rotateY(-18deg) rotateZ(-3deg)',
+              transformStyle: 'preserve-3d',
+              filter: 'drop-shadow(0 28px 26px rgba(136, 12, 20, 0.2))',
+            }}
           >
-            {product.available ? (
-              <><Plus size={16}/> Adicionar</>
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-auto object-contain transition-transform duration-700 ease-out group-hover:translate-x-2 group-hover:-translate-y-1"
+                style={{ transform: 'rotateY(10deg) rotateX(6deg)' }}
+              />
             ) : (
-              <><AlertCircle size={16}/> Indisponível</>
+              <div className="text-gray-300 font-bold text-4xl">FOTO</div>
             )}
-          </button>
+          </div>
+        </div>
+
+        <div className="relative flex-1 text-center lg:text-left max-w-xl">
+          <span className="inline-block px-4 py-2 rounded-full bg-vcl-red/10 text-vcl-red text-xs font-black uppercase tracking-[0.24em] mb-5">
+            Novo lançamento
+          </span>
+          <h3 className="font-black text-3xl md:text-5xl text-vcl-black leading-tight mb-4">
+            {product.name}
+          </h3>
+          <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
+            Estamos a preparar a próxima coleção oficial do Vitória Clube de Lisboa. Fica atento às novidades e acompanha a nossa loja em breve.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
+            <button
+              disabled
+              className="bg-vcl-black text-white px-6 py-3 rounded-full font-bold cursor-not-allowed opacity-80"
+            >
+              Em breve
+            </button>
+            <span className="text-sm font-bold uppercase tracking-[0.2em] text-gray-400">
+              Por anunciar
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -14,6 +14,9 @@ const Futebol = () => {
   const [loading, setLoading] = useState(true);
   
   const [escalaoAtivo, setEscalaoAtivo] = useState('Veteranos'); 
+  const [equipaInfantisAtiva, setEquipaInfantisAtiva] = useState('A');
+  const [equipaBenjaminsAtiva, setEquipaBenjaminsAtiva] = useState('A');
+  const [equipaIniciadosAtiva, setEquipaIniciadosAtiva] = useState('A');
   
   // Começamos com 'jogos1' para não mostrar tabela vazia nos Veteranos
   const [vistaAtiva, setVistaAtiva] = useState('jogos1');
@@ -44,26 +47,77 @@ const Futebol = () => {
   // --- FILTROS INTELIGENTES ---
   const normalizar = (str) => str ? str.trim().toLowerCase() : '';
 
+  const escalaoExibido = escalaoAtivo === 'Infantis'
+    ? `Infantis ${equipaInfantisAtiva}`
+    : escalaoAtivo === 'Benjamins'
+      ? `Benjamins ${equipaBenjaminsAtiva}`
+      : escalaoAtivo === 'Iniciados'
+        ? `Iniciados ${equipaIniciadosAtiva}`
+        : escalaoAtivo;
+
+  const escalaoAtivoReal = escalaoAtivo === 'Infantis'
+    ? `Infantis ${equipaInfantisAtiva}`
+    : escalaoAtivo === 'Benjamins'
+      ? `Benjamins ${equipaBenjaminsAtiva}`
+      : escalaoAtivo === 'Iniciados'
+        ? `Iniciados ${equipaIniciadosAtiva}`
+        : escalaoAtivo;
+
   const filtrarJogos = (fase) => jogos.filter(j => 
-    normalizar(j.escalao) === normalizar(escalaoAtivo) && j.fase === fase
+    normalizar(j.escalao) === normalizar(escalaoAtivoReal) && j.fase === fase
   );
 
   const filtrarTabela = (fase) => tabela
-    .filter(t => normalizar(t.escalao) === normalizar(escalaoAtivo) && t.fase === fase)
+    .filter(t => normalizar(t.escalao) === normalizar(escalaoAtivoReal) && t.fase === fase)
     .sort((a, b) => Number(a.pos) - Number(b.pos));
 
-  const plantelFiltrado = plantel.filter(p => normalizar(p.escalao) === normalizar(escalaoAtivo));
+  const plantelFiltrado = plantel.filter(p => normalizar(p.escalao) === normalizar(escalaoAtivoReal));
 
-  const treinosFiltrados = treinos.filter(t => normalizar(t.escalao) === normalizar(escalaoAtivo));
+  const treinosFiltrados = treinos.filter(t => normalizar(t.escalao) === normalizar(escalaoAtivoReal));
 
   const listaEscaloes = [
-    'Veteranos', 'Juniores', 'Juvenis', 'Iniciados A', 'Iniciados B', 
-    'Infantis A', 'Infantis B', 'Benjamins'
+    'Veteranos', 'Juvenis', 'Iniciados', 'Infantis', 'Benjamins'
   ];
 
   // --- LÓGICA DE TROCA DE ESCALÃO ---
+  const handleChangeInfantis = (equipa, novaVista) => {
+    setEscalaoAtivo('Infantis');
+    setEquipaInfantisAtiva(equipa);
+    setVistaAtiva(novaVista);
+  };
+
+  const handleChangeBenjamins = (equipa, novaVista) => {
+    setEscalaoAtivo('Benjamins');
+    setEquipaBenjaminsAtiva(equipa);
+    setVistaAtiva(novaVista);
+  };
+
+  const handleChangeIniciados = (equipa, novaVista) => {
+    setEscalaoAtivo('Iniciados');
+    setEquipaIniciadosAtiva(equipa);
+    setVistaAtiva(novaVista);
+  };
+
   const handleChangeEscalao = (novoEscalao) => {
     setEscalaoAtivo(novoEscalao);
+
+    if (novoEscalao === 'Infantis') {
+      setEquipaInfantisAtiva('A');
+      setVistaAtiva('classificacao1');
+      return;
+    }
+
+    if (novoEscalao === 'Benjamins') {
+      setEquipaBenjaminsAtiva('A');
+      setVistaAtiva('classificacao1');
+      return;
+    }
+
+    if (novoEscalao === 'Iniciados') {
+      setEquipaIniciadosAtiva('A');
+      setVistaAtiva('classificacao1');
+      return;
+    }
     
     // Se mudarmos para Veteranos, força a ir para 'jogos1' ou 'plantel', nunca classificação
     if (novoEscalao === 'Veteranos') {
@@ -71,7 +125,7 @@ const Futebol = () => {
         setVistaAtiva('jogos1');
       }
     } else {
-      // Se vieres de Veteranos (jogos1) para Juniores, mostrar tabela por defeito
+      // Se vieres de Veteranos (jogos1) para outro escalão, mostrar tabela por defeito
       if (vistaAtiva === 'jogos1') setVistaAtiva('classificacao1');
     }
   };
@@ -81,7 +135,7 @@ const Futebol = () => {
     <div className="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in">
       <div className="p-6 border-b border-gray-100">
         <h2 className="text-xl font-bold text-vcl-black flex items-center gap-2">
-          <Trophy className="text-vcl-gold" /> Tabela: {escalaoAtivo} <span className="text-gray-400 text-sm font-normal">({faseTitulo})</span>
+          <Trophy className="text-vcl-gold" /> Tabela: {escalaoExibido} <span className="text-gray-400 text-sm font-normal">({faseTitulo})</span>
         </h2>
       </div>
       {dados.length > 0 ? (
@@ -142,7 +196,7 @@ const Futebol = () => {
   const renderTreinos = (dados) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 animate-fade-in">
       <h2 className="text-xl font-bold text-vcl-black mb-6 flex items-center gap-2">
-        <Clock className="text-vcl-red" /> Horários de Treinos: {escalaoAtivo}
+        <Clock className="text-vcl-red" /> Horários de Treinos: {escalaoExibido}
       </h2>
       {dados.length > 0 ? (
         <div className="space-y-4">
@@ -165,7 +219,7 @@ const Futebol = () => {
   const renderJogos = (dados, faseTitulo) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 animate-fade-in">
       <h2 className="text-xl font-bold text-vcl-black mb-6 flex items-center gap-2">
-        <Calendar className="text-vcl-red" /> Jogos: {escalaoAtivo} <span className="text-gray-400 text-sm font-normal">({faseTitulo})</span>
+        <Calendar className="text-vcl-red" /> Jogos: {escalaoExibido} <span className="text-gray-400 text-sm font-normal">({faseTitulo})</span>
       </h2>
       {dados.length > 0 ? (
         <div className="space-y-4">
@@ -236,6 +290,48 @@ const Futebol = () => {
                     <button onClick={() => setVistaAtiva('jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
                     <button onClick={() => setVistaAtiva('plantel')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantel' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
                   </>
+                ) : escalaoAtivo === 'Infantis' ? (
+                  <>
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Infantis A</div>
+                    <button onClick={() => handleChangeInfantis('A', 'classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao1' && equipaInfantisAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeInfantis('A', 'jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' && equipaInfantisAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeInfantis('A', 'plantelA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeInfantis('A', 'treinosA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Infantis B</div>
+                    <button onClick={() => handleChangeInfantis('B', 'classificacao2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao2' && equipaInfantisAtiva === 'B' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeInfantis('B', 'jogos2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos2' && equipaInfantisAtiva === 'B' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeInfantis('B', 'plantelB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeInfantis('B', 'treinosB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+                  </>
+                ) : escalaoAtivo === 'Benjamins' ? (
+                  <>
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Benjamins A</div>
+                    <button onClick={() => handleChangeBenjamins('A', 'classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao1' && equipaBenjaminsAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeBenjamins('A', 'jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' && equipaBenjaminsAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeBenjamins('A', 'plantelA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeBenjamins('A', 'treinosA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Benjamins B</div>
+                    <button onClick={() => handleChangeBenjamins('B', 'classificacao2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao2' && equipaBenjaminsAtiva === 'B' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeBenjamins('B', 'jogos2')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos2' && equipaBenjaminsAtiva === 'B' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeBenjamins('B', 'plantelB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeBenjamins('B', 'treinosB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+                  </>
+                ) : escalaoAtivo === 'Iniciados' ? (
+                  <>
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2">Iniciados A</div>
+                    <button onClick={() => handleChangeIniciados('A', 'classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'classificacao1' && equipaIniciadosAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeIniciados('A', 'jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' && equipaIniciadosAtiva === 'A' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeIniciados('A', 'plantelA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeIniciados('A', 'treinosA')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosA' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+
+                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase mt-2 border-t">Iniciados B</div>
+                    <button onClick={() => handleChangeIniciados('B', 'classificacao1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${equipaIniciadosAtiva === 'B' && (vistaAtiva === 'classificacao1' || vistaAtiva === 'classificacao2') ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Trophy size={16} /> Classificação </button>
+                    <button onClick={() => handleChangeIniciados('B', 'jogos1')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'jogos1' && equipaIniciadosAtiva === 'B' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Calendar size={16} /> Calendário </button>
+                    <button onClick={() => handleChangeIniciados('B', 'plantelB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'plantelB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Users size={16} /> Plantel </button>
+                    <button onClick={() => handleChangeIniciados('B', 'treinosB')} className={`px-4 py-3 text-left flex items-center gap-3 border-l-4 transition-all hover:bg-gray-50 ${vistaAtiva === 'treinosB' ? 'border-vcl-red text-vcl-red bg-red-50' : 'border-transparent text-gray-600'}`}> <Clock size={16} /> Horários Treinos </button>
+                  </>
                 ) : (
                   <>
                     {/* Menu normal: Fase 1, Fase 2 e Equipa (Plantel + Treinos) */}
@@ -260,18 +356,52 @@ const Futebol = () => {
           {/* ÁREA PRINCIPAL */}
           <div className="lg:col-span-3">
             
-            {vistaAtiva === 'treinos' && renderTreinos(treinosFiltrados)}
+            {(vistaAtiva === 'treinos' || vistaAtiva === 'treinosA' || vistaAtiva === 'treinosB') && renderTreinos(treinosFiltrados)}
             
-            {vistaAtiva === 'classificacao1' && renderTabela(filtrarTabela('1'), 'Fase 1')}
-            {vistaAtiva === 'jogos1' && renderJogos(filtrarJogos('1'), 'Fase 1')}
-            
-            {vistaAtiva === 'classificacao2' && renderTabela(filtrarTabela('2'), 'Fase 2')}
-            {vistaAtiva === 'jogos2' && renderJogos(filtrarJogos('2'), 'Fase 2')}
+            {escalaoAtivo === 'Iniciados' && equipaIniciadosAtiva === 'B' && (vistaAtiva === 'classificacao1' || vistaAtiva === 'classificacao2') && (
+              <div className="mb-6 flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleChangeIniciados('B', 'classificacao1')}
+                  className={`px-4 py-2 rounded font-bold text-sm transition ${vistaAtiva === 'classificacao1' ? 'bg-vcl-red text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
+                >
+                  Classificação Fase 1
+                </button>
+                <button
+                  onClick={() => handleChangeIniciados('B', 'classificacao2')}
+                  className={`px-4 py-2 rounded font-bold text-sm transition ${vistaAtiva === 'classificacao2' ? 'bg-vcl-red text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
+                >
+                  Classificação Fase 2
+                </button>
+              </div>
+            )}
 
-            {vistaAtiva === 'plantel' && (
+            {escalaoAtivo === 'Iniciados' && equipaIniciadosAtiva === 'B' && (vistaAtiva === 'jogos1' || vistaAtiva === 'jogos2') && (
+              <div className="mb-6 flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleChangeIniciados('B', 'jogos1')}
+                  className={`px-4 py-2 rounded font-bold text-sm transition ${vistaAtiva === 'jogos1' ? 'bg-vcl-red text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
+                >
+                  Calendário Fase 1
+                </button>
+                <button
+                  onClick={() => handleChangeIniciados('B', 'jogos2')}
+                  className={`px-4 py-2 rounded font-bold text-sm transition ${vistaAtiva === 'jogos2' ? 'bg-vcl-red text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
+                >
+                  Calendário Fase 2
+                </button>
+              </div>
+            )}
+
+            {vistaAtiva === 'classificacao1' && renderTabela(filtrarTabela('1'), escalaoAtivo === 'Infantis' ? `Infantis ${equipaInfantisAtiva}` : escalaoAtivo === 'Benjamins' ? `Benjamins ${equipaBenjaminsAtiva}` : escalaoAtivo === 'Iniciados' ? `Iniciados ${equipaIniciadosAtiva}` : 'Fase 1')}
+            {vistaAtiva === 'jogos1' && renderJogos(filtrarJogos('1'), escalaoAtivo === 'Infantis' ? `Infantis ${equipaInfantisAtiva}` : escalaoAtivo === 'Benjamins' ? `Benjamins ${equipaBenjaminsAtiva}` : escalaoAtivo === 'Iniciados' ? `Iniciados ${equipaIniciadosAtiva}` : 'Fase 1')}
+            
+            {vistaAtiva === 'classificacao2' && renderTabela(filtrarTabela('2'), escalaoAtivo === 'Infantis' ? `Infantis ${equipaInfantisAtiva}` : escalaoAtivo === 'Benjamins' ? `Benjamins ${equipaBenjaminsAtiva}` : escalaoAtivo === 'Iniciados' ? `Iniciados ${equipaIniciadosAtiva}` : 'Fase 2')}
+            {vistaAtiva === 'jogos2' && renderJogos(filtrarJogos('2'), escalaoAtivo === 'Infantis' ? `Infantis ${equipaInfantisAtiva}` : escalaoAtivo === 'Benjamins' ? `Benjamins ${equipaBenjaminsAtiva}` : escalaoAtivo === 'Iniciados' ? `Iniciados ${equipaIniciadosAtiva}` : 'Fase 2')}
+
+            {(vistaAtiva === 'plantel' || vistaAtiva === 'plantelA' || vistaAtiva === 'plantelB') && (
               <div className="animate-fade-in">
                  <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-                    <h2 className="text-xl font-bold text-vcl-black flex items-center gap-2"><Users className="text-vcl-red" /> Plantel {escalaoAtivo}</h2>
+                    <h2 className="text-xl font-bold text-vcl-black flex items-center gap-2"><Users className="text-vcl-red" /> Plantel {escalaoAtivo === 'Infantis' ? `Infantis ${equipaInfantisAtiva}` : escalaoAtivo === 'Benjamins' ? `Benjamins ${equipaBenjaminsAtiva}` : escalaoAtivo === 'Iniciados' ? `Iniciados ${equipaIniciadosAtiva}` : escalaoAtivo}</h2>
                  </div>
                  {plantelFiltrado.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
